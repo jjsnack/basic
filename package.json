@@ -1,0 +1,11 @@
+{
+  "name": "basic",
+  "version": "0.1.0",
+  "description": "A minimal black-and-white Hugo theme for text-first blogs.",
+  "license": "MIT",
+  "scripts": {
+    "dev": "hugo server --source=exampleSite -D --disableFastRender --watch --logLevel info",
+    "build": "hugo --source=exampleSite --minify --logLevel info",
+    "preview": "hugo server --source=exampleSite -e production --disableFastRender --watch --logLevel info"
+  }
+}

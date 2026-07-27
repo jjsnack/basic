@@ -1,0 +1,11 @@
+name = "basic"
+license = "MIT"
+licenselink = "https://github.com/jjsnacks/basic/blob/main/LICENSE"
+description = "A minimal black-and-white Hugo theme for text-first blogs, with light/dark/auto modes and hover pops of colour."
+homepage = "https://github.com/jjsnacks/basic"
+tags = ["minimal", "blog", "text", "dark-mode", "responsive"]
+features = ["Light/Dark/Auto", "No JS dependencies", "Fast"]
+min_version = "0.116.0"
+
+[author]
+name = "jjsnacks"

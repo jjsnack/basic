@@ -1,0 +1,11 @@
+public/
+resources/
+.hugo_build.lock
+node_modules/
+.DS_Store
+
+# local tooling, not part of the theme
+.claude/
+
+# font source archives (extracted files live in static/fonts/)
+*.zip
