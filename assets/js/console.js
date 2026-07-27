@@ -269,6 +269,7 @@
       try { fig = parseFig(atob(root.dataset.font || "")); } catch (e) { fig = null; }
       var art = document.createElement("pre");
       art.className = "console__banner-art";
+      art.setAttribute("aria-hidden", "true"); // decorative ASCII — keep it out of the aria-live log
       art.textContent = banner(root.dataset.title || "", fig).join("\n");
       log.appendChild(art);
       write({ text: "\n" });
