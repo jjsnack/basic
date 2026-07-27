@@ -141,7 +141,7 @@
       var input = root.querySelector(".console__input");
       var expandBtn = root.querySelector(".console__expand");
       var closeBtn = root.querySelector(".console__close");
-      var history = [];
+      var cmdHistory = []; // local — do not shadow window.history
 
       var write = function (line, kind) {
         var el = document.createElement("div");
@@ -160,12 +160,12 @@
         var spn = 60 / 84 / 2; // seconds per eighth-note at a gentle 84bpm
         var ctx, master, timer, nextTime, step, playing = false, vol = 0.5;
         var freq = function (m) { return 440 * Math.pow(2, (m - 69) / 12); };
-        var voice = function (m, t, dur, type, vol) {
+        var voice = function (m, t, dur, type, peak) { // peak: per-note gain (distinct from master vol)
           if (!m) return;
           var o = ctx.createOscillator(), g = ctx.createGain();
           o.type = type; o.frequency.value = freq(m);
           g.gain.setValueAtTime(0.0001, t);
-          g.gain.exponentialRampToValueAtTime(vol, t + 0.04); // soft attack
+          g.gain.exponentialRampToValueAtTime(peak, t + 0.04); // soft attack
           g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
           o.connect(g); g.connect(master); o.start(t); o.stop(t + dur);
         };
@@ -178,15 +178,18 @@
           }
         };
         return {
+          // Resolves once audio is actually running; rejects if the browser blocks it.
           on: function () {
-            if (playing) return;
+            if (playing) return Promise.resolve();
             if (!ctx) {
               ctx = new (window.AudioContext || window.webkitAudioContext)();
               master = ctx.createGain(); master.gain.value = vol; master.connect(ctx.destination);
             }
-            ctx.resume();
-            playing = true; step = 0; nextTime = ctx.currentTime + 0.05;
-            tick(); timer = setInterval(tick, 25);
+            playing = true; step = 0;
+            return Promise.resolve(ctx.resume()).then(function () {
+              nextTime = ctx.currentTime + 0.05;
+              tick(); timer = setInterval(tick, 25);
+            }, function (err) { playing = false; throw err; });
           },
           off: function () { playing = false; clearInterval(timer); },
           setVolume: function (n) { vol = n / 10; if (master) master.gain.value = vol; }
@@ -231,12 +234,17 @@
         e.preventDefault();
         var value = input.value;
         write({ text: "$ " + value }, "cmd");
-        if (value.trim()) history.push(value.trim());
-        var res = run(value, { history: history });
+        if (value.trim()) cmdHistory.push(value.trim());
+        var res = run(value, { history: cmdHistory });
         if (res.clear) log.innerHTML = "";
         res.lines.forEach(function (l) { write(l); });
         if (res.theme) applyTheme(res.theme);
-        if (res.music === "on") { chiptune.on(); write({ text: "♪ music on" }); }
+        if (res.music === "on") {
+          chiptune.on().then(
+            function () { write({ text: "♪ music on" }); log.scrollTop = log.scrollHeight; },
+            function () { write({ text: "music blocked by the browser — interact with the page and retry." }); log.scrollTop = log.scrollHeight; }
+          );
+        }
         if (res.music === "off") { chiptune.off(); write({ text: "music off" }); }
         if (res.volume != null) chiptune.setVolume(res.volume);
         input.value = "";
