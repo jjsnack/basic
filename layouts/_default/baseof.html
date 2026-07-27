@@ -14,7 +14,10 @@
       })();
     </script>
 
-    {{ $css := resources.Get "css/main.css" | resources.Minify | resources.Fingerprint }}
+    {{/* main.css + every theme file, concatenated (themes must come after). */}}
+    {{ $main := resources.Get "css/main.css" }}
+    {{ $themes := resources.Match "css/themes/*.css" }}
+    {{ $css := slice $main | append $themes | resources.Concat "css/bundle.css" | resources.Minify | resources.Fingerprint }}
     <link rel="stylesheet" href="{{ $css.RelPermalink }}" />
     {{ block "head" . }}{{ end }}
   </head>

@@ -16,7 +16,8 @@ see `layouts/partials/console.html`.
 ## Layout
 
 - `layouts/` — templates (`_default/`, `partials/`). `baseof.html` is the shell.
-- `assets/css/main.css` — the whole stylesheet. One `--accent` var tints hovers.
+- `assets/css/main.css` — the core stylesheet (base light/dark, layout, sets).
+  Colour themes live in `assets/css/themes/*.css`, concatenated in `baseof.html`.
 - `assets/js/console.js` — the floating terminal (below).
 - `assets/figlet/heading.flf` — figfont for the console banner.
 
@@ -55,12 +56,14 @@ Subcommands:
 
 ## Themes
 
-Themes are pure CSS: one `:root[data-theme="<name>"]` block in
-`assets/css/main.css` sets the palette. Picked from the console (`theme set
-<name>`, `theme list`) — the name list lives in `console.js`'s `theme` command
-`modes` array, so add there too. `light`/`dark`/`auto` are the base modes;
-everything else is a colour theme. Persistence + no-flash apply happen in
-`baseof.html` (pre-paint script) and `header.html` (toggle glyph).
+Themes are pure CSS: each named theme is its own file under
+`assets/css/themes/*.css` holding one `:root[data-theme="<name>"]` block.
+`baseof.html` concatenates `main.css` + every theme file (themes last) into one
+fingerprinted bundle. Picked from the console (`theme set <name>`, `theme
+list`) — the name list lives in `console.js`'s `theme` command `modes` array,
+so add there too. `light`/`dark`/`auto` are the base modes (defined in
+`main.css`); everything else is a colour-theme file. Persistence + no-flash
+apply happens in `baseof.html`'s pre-paint script.
 
 ### Colourable surfaces
 
@@ -100,10 +103,12 @@ with contrast against the fill.
 
 ### Adding a theme
 
-1. Add a `:root[data-theme="<name>"] { … }` block. Use `:root[...]` (not bare
-   `[data-theme]`) so it matches the dark media query's specificity and wins by
-   source order. Set core vars + `--selection` + `--code` + the pop palette;
-   override any sets you want distinct from `--accent`.
+1. Add `assets/css/themes/<name>.css` with one `:root[data-theme="<name>"] { … }`
+   block. Use `:root[...]` (not bare `[data-theme]`) so it matches the dark media
+   query's specificity and wins by source order (themes are concatenated after
+   `main.css`). Set core vars + `--selection` + `--code` + the pop palette;
+   override any sets you want distinct from `--accent`. It's picked up by the
+   `resources.Match "css/themes/*.css"` glob automatically — no wiring needed.
 2. Add `<name>` to the `modes` array in `console.js`'s `theme` command, plus an
    `assert` for it in the self-check, then run `node assets/js/console.js`.
 3. `pnpm build` and eyeball it (`theme set <name>`), including a post with code
