@@ -69,13 +69,14 @@
 
       case "theme": {
         var sub = (cmd.args[0] || "").toLowerCase();
-        var modes = ["light", "dark", "auto"];
+        // base modes first, then colour palettes (see main.css)
+        var modes = ["light", "dark", "auto", "paper", "dracula"];
         if (sub === "list") {
           return { lines: modes.map(function (m) { return { text: "   " + m }; }) };
         }
         if (sub === "set") {
           var mode = (cmd.args[1] || "").toLowerCase();
-          if (modes.indexOf(mode) === -1) return { lines: [{ text: "usage: theme set <light | dark | auto>" }] };
+          if (modes.indexOf(mode) === -1) return { lines: [{ text: "usage: theme set <" + modes.join(" | ") + ">" }] };
           return { lines: [{ text: "theme set to " + mode + "." }], theme: mode };
         }
         return { lines: [
@@ -300,6 +301,7 @@
     assert.strictEqual(run("", {}).lines.length, 0);
     assert.ok(/theme/.test(run("help", {}).lines[1].text));
     assert.strictEqual(run("theme set dark", {}).theme, "dark");
+    assert.strictEqual(run("theme set dracula", {}).theme, "dracula");
     assert.ok(/usage: theme set/.test(run("theme set purple", {}).lines[0].text));
     assert.ok(/dark/.test(run("theme list", {}).lines[1].text));
     assert.ok(/Subcommands/.test(run("theme", {}).lines[4].text));

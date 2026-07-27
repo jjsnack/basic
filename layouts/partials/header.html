@@ -15,7 +15,7 @@
     var glyph = { auto: "◐", light: "○", dark: "●" };
     function current() { return localStorage.getItem("theme") || "auto"; }
     function render(m) {
-      label.textContent = glyph[m];
+      label.textContent = glyph[m] || "◆"; // colour themes (set via console) get a generic glyph
       if (m === "auto") delete document.documentElement.dataset.theme;
       else document.documentElement.dataset.theme = m;
     }

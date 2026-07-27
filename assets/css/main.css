@@ -29,6 +29,21 @@
   --border: #e6e6e6;
   --accent: #b5451e; /* the pop of colour — change this one line to re-tint */
   --accent-fg: #ffffff; /* text/glyph colour on an accent fill */
+  --selection: #f3d9cc; /* text-selection highlight */
+  --code: var(--accent);  /* inline `code` colour */
+
+  /* semantic sets — groups of UI elements coloured together. Each defaults to
+     --accent so a theme can re-tint one set (e.g. pills) without touching the
+     others. Fill sets carry a matching *-fg for text on the filled background. */
+  --link: var(--accent);                             /* links, hovered nav, prose underline */
+  --pill: var(--accent); --pill-fg: var(--accent-fg); /* topic tag pills */
+  --row:  var(--accent); --row-fg:  var(--accent-fg); /* post-list row hover */
+  --term: var(--accent); --term-fg: var(--accent-fg); /* console: fills, banner, prompt, caret */
+  --focus: var(--accent);                            /* focus-visible outline */
+
+  /* pop palette — themes remap these; also feed syntax + mermaid diagrams */
+  --c-red: #c0392b; --c-orange: #cc6a1a; --c-yellow: #b8860b; --c-green: #2e8b57;
+  --c-cyan: #1f7a8c; --c-blue: #2c5f8a; --c-purple: #7b4bc4; --c-pink: #b83280;
 
   --measure: 68ch;
   --pad: 1.5rem;
@@ -46,12 +61,55 @@
     --border: #262626;
   }
 }
+/* dark base shares its pops with the media-query block above */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --selection: #33261f;
+    --c-red: #ff6b6b; --c-orange: #ffb86c; --c-yellow: #f1fa8c; --c-green: #50fa7b;
+    --c-cyan: #8be9fd; --c-blue: #7aa2f7; --c-purple: #bd93f9; --c-pink: #ff79c6;
+  }
+}
 /* forced dark */
 :root[data-theme="dark"] {
   --bg: #111111;
   --fg: #ededed;
   --muted: #7d7d7d;
   --border: #262626;
+  --selection: #33261f;
+  --c-red: #ff6b6b; --c-orange: #ffb86c; --c-yellow: #f1fa8c; --c-green: #50fa7b;
+  --c-cyan: #8be9fd; --c-blue: #7aa2f7; --c-purple: #bd93f9; --c-pink: #ff79c6;
+}
+
+/* ---- colour themes (pick via the console: `theme set <name>`) ----
+   Full palettes with pop colours across the whole UI. Selectors use :root[...]
+   so they match the dark media query's specificity and win by source order. */
+
+/* Paper — warm light, ink on cream with vermilion + jewel-tone pops */
+:root[data-theme="paper"] {
+  --bg: #faf4e8; --fg: #2b2b2b; --muted: #8a7f6a; --border: #e4d8c0;
+  --accent: #c0392b; --accent-fg: #ffffff; --selection: #efe2c6; --code: #b83280;
+  --c-red: #c0392b; --c-orange: #cc6a1a; --c-yellow: #b8860b; --c-green: #2e8b57;
+  --c-cyan: #1f7a8c; --c-blue: #2c5f8a; --c-purple: #7b4bc4; --c-pink: #b83280;
+  /* sets: each surface its own hue */
+  --link: var(--c-red);
+  --pill: var(--c-purple); --pill-fg: #ffffff;
+  --row:  var(--c-blue);   --row-fg:  #ffffff;
+  --term: var(--c-green);  --term-fg: #ffffff;
+  --focus: var(--c-orange);
+}
+
+/* Dracula — the canonical dark palette (draculatheme.com spec) */
+:root[data-theme="dracula"] {
+  --bg: #282a36; --fg: #f8f8f2; --muted: #6272a4; --border: #44475a;
+  --accent: #bd93f9; --accent-fg: #282a36; --selection: #44475a; --code: #ff79c6;
+  --c-red: #ff5555; --c-orange: #ffb86c; --c-yellow: #f1fa8c; --c-green: #50fa7b;
+  --c-cyan: #8be9fd; --c-blue: #8be9fd; --c-purple: #bd93f9; --c-pink: #ff79c6;
+  /* sets: highlight stays muted grey, each surface a distinct pop */
+  --link: var(--c-cyan);
+  --pill: var(--c-green);  --pill-fg: var(--bg);
+  --row:  var(--c-purple); --row-fg:  var(--bg);
+  --term: var(--c-pink);   --term-fg: var(--bg);
+  --focus: var(--c-orange);
 }
 
 * { box-sizing: border-box; }
@@ -74,10 +132,12 @@ a { color: inherit; text-decoration: none; }
 a:hover,
 a:focus-visible,
 .theme-toggle:hover,
-.theme-toggle:focus-visible { color: var(--accent); }
+.theme-toggle:focus-visible { color: var(--link); }
 .post__body a { text-decoration: underline; text-underline-offset: 2px; text-decoration-color: var(--border); }
-.post__body a:hover { text-decoration-color: var(--accent); }
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.post__body a:hover { text-decoration-color: var(--link); }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+::selection { background: var(--selection); }
+::-moz-selection { background: var(--selection); }
 
 /* ---- layout ---- */
 .site-header,
@@ -102,7 +162,7 @@ main,
 }
 .site-title { font-family: var(--pixel); font-weight: 400; font-size: 1.75rem; letter-spacing: 0.02em; }
 .site-nav { display: flex; align-items: baseline; gap: 1rem; font-family: var(--mono); font-size: 0.85rem; }
-.site-nav .current { color: var(--accent); }
+.site-nav .current { color: var(--link); }
 
 .theme-toggle {
   background: none;
@@ -161,9 +221,9 @@ main,
 }
 .console-launch:hover,
 .console-launch:focus-visible {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--accent-fg);
+  background: var(--term);
+  border-color: var(--term);
+  color: var(--term-fg);
 }
 
 .console {
@@ -220,7 +280,7 @@ main,
   transition: background-color 0.15s, color 0.15s;
 }
 .console__btn:hover,
-.console__btn:focus-visible { background: var(--accent); color: var(--accent-fg); }
+.console__btn:focus-visible { background: var(--term); color: var(--term-fg); }
 .console__title { color: var(--muted); font-size: 0.75rem; }
 .console__screen {
   padding: 0.75rem;
@@ -237,11 +297,11 @@ main,
   margin: 0 0 0.5rem;
   white-space: pre;
   line-height: 1.02;
-  color: var(--accent);
+  color: var(--term);
   overflow-x: auto;
 }
 .console__form { display: flex; align-items: baseline; gap: 0.5em; margin-top: 0.25rem; }
-.console__prompt { color: var(--accent); }
+.console__prompt { color: var(--term); }
 .console__input {
   flex: 1;
   min-width: 0;
@@ -250,7 +310,7 @@ main,
   padding: 0;
   color: inherit;
   font: inherit;
-  caret-color: var(--accent);
+  caret-color: var(--term);
 }
 .console__input:focus { outline: none; }
 
@@ -273,12 +333,12 @@ main,
   transition: background-color 0.15s, border-color 0.15s, color 0.15s;
 }
 .topics__item:hover {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--accent-fg);
+  background: var(--pill);
+  border-color: var(--pill);
+  color: var(--pill-fg);
 }
 .topics__count { color: var(--muted); }
-.topics__item:hover .topics__count { color: var(--accent-fg); }
+.topics__item:hover .topics__count { color: var(--pill-fg); }
 
 /* ---- post list ---- */
 .post-list { list-style: none; margin: 0; padding: 0; }
@@ -295,10 +355,10 @@ main,
   border-radius: 2px;
   transition: background-color 0.1s, color 0.1s;
 }
-.post-list__link:hover { background: var(--accent); color: var(--accent-fg); }
+.post-list__link:hover { background: var(--row); color: var(--row-fg); }
 .post-list__title { font-weight: 450; font-size: 1.25rem; }
 .post-list__date { font-family: var(--mono); font-size: 0.8rem; color: var(--muted); white-space: nowrap; }
-.post-list__link:hover .post-list__date { color: var(--accent-fg); }
+.post-list__link:hover .post-list__date { color: var(--row-fg); }
 
 /* ---- single post ---- */
 .post__head { margin-bottom: 2.5rem; }
@@ -346,7 +406,7 @@ main,
   color: var(--muted);
 }
 .post__topics a::before { content: "#"; color: var(--border); }
-.post__topics a:hover::before { color: var(--accent); }
+.post__topics a:hover::before { color: var(--link); }
 .post__body table {
   width: 100%;
   border-collapse: collapse;

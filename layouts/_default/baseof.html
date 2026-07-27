@@ -10,7 +10,7 @@
     <script>
       (function () {
         var t = localStorage.getItem("theme");
-        if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
+        if (t) document.documentElement.dataset.theme = t; // light/dark or a colour theme
       })();
     </script>
 
@@ -28,10 +28,23 @@
       {{/* ponytail: mermaid from CDN (Hugo's documented approach); vendor it if you need offline builds. */}}
       <script type="module">
         import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
-        var root = document.documentElement;
-        var dark = root.dataset.theme === "dark" ||
-          (!root.dataset.theme && matchMedia("(prefers-color-scheme: dark)").matches);
-        mermaid.initialize({ startOnLoad: true, theme: dark ? "dark" : "default" });
+        // Tint diagrams from the active theme's CSS vars (works for every theme).
+        var cs = getComputedStyle(document.documentElement);
+        var v = function (n) { return cs.getPropertyValue(n).trim(); };
+        mermaid.initialize({
+          startOnLoad: true,
+          theme: "base",
+          themeVariables: {
+            background: v("--bg"),
+            primaryColor: v("--border"),
+            primaryTextColor: v("--fg"),
+            primaryBorderColor: v("--accent"),
+            secondaryColor: v("--c-purple"),
+            tertiaryColor: v("--c-green"),
+            lineColor: v("--muted"),
+            fontFamily: v("--mono") || "monospace"
+          }
+        });
         {{/* ponytail: theme fixed at load; reload to re-tint diagrams after toggling. */}}
       </script>
     {{ end }}
