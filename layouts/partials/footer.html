@@ -1,0 +1,4 @@
+<footer class="site-footer">
+  <span>© {{ now.Year }} {{ site.Title }}</span>
+  {{ with site.Params.footerNote }}<span>{{ . | safeHTML }}</span>{{ end }}
+</footer>

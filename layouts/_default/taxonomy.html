@@ -1,0 +1,18 @@
+{{ define "main" }}
+  {{ if eq .Kind "term" }}
+    {{/* a single topic: list its posts */}}
+    <header class="page-head">
+      <a class="back-link" href="{{ site.Home.RelPermalink }}">← All posts</a>
+      <h1>{{ .Title }}</h1>
+      <p class="page-intro">{{ len .Pages }} post{{ if ne (len .Pages) 1 }}s{{ end }} on this topic.</p>
+    </header>
+    {{ partial "post-list.html" .Pages }}
+  {{ else }}
+    {{/* the taxonomy root: list all topics */}}
+    <header class="page-head">
+      <h1>{{ .Title }}</h1>
+      {{ with .Content }}<div class="page-intro">{{ . }}</div>{{ end }}
+    </header>
+    {{ partial "topics.html" . }}
+  {{ end }}
+{{ end }}

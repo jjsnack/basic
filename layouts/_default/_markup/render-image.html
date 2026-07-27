@@ -1,0 +1,5 @@
+{{/* Markdown images become <figure>s; alt text doubles as caption. */}}
+<figure class="post-figure">
+  <img src="{{ .Destination | safeURL }}" alt="{{ .PlainText }}" loading="lazy" decoding="async"{{ with .Title }} title="{{ . }}"{{ end }} />
+  {{ with .PlainText }}<figcaption>{{ . }}</figcaption>{{ end }}
+</figure>

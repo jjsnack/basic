@@ -1,0 +1,8 @@
+{{/* Topic cloud, ordered by post count. Renders nothing if no topics exist. */}}
+{{ with site.Taxonomies.topics }}
+  <nav class="topics" aria-label="Topics">
+    {{ range .ByCount }}
+      <a class="topics__item" href="{{ .Page.RelPermalink }}">{{ .Page.Title }} <span class="topics__count">{{ .Count }}</span></a>
+    {{ end }}
+  </nav>
+{{ end }}

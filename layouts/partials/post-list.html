@@ -1,0 +1,15 @@
+{{/* Receives a slice of pages as the context. */}}
+{{ if . }}
+  <ul class="post-list">
+    {{ range . }}
+      <li class="post-list__item">
+        <a class="post-list__link" href="{{ .RelPermalink }}">
+          <span class="post-list__title">{{ .Title }}</span>
+          <time class="post-list__date" datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "Jan 2, 2006" }}</time>
+        </a>
+      </li>
+    {{ end }}
+  </ul>
+{{ else }}
+  <p class="empty">Nothing here yet.</p>
+{{ end }}
