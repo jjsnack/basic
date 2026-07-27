@@ -95,7 +95,7 @@ main,
   gap: 1rem;
   padding-block: 2rem 3rem;
 }
-.site-title { font-family: var(--pixel); font-weight: 400; font-size: 1.5rem; letter-spacing: 0.02em; }
+.site-title { font-family: var(--pixel); font-weight: 400; font-size: 2.25rem; letter-spacing: 0.02em; }
 .site-nav { display: flex; align-items: baseline; gap: 1rem; font-family: var(--mono); font-size: 0.85rem; }
 .site-nav .current { color: var(--accent); }
 
