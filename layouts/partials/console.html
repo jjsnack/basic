@@ -2,8 +2,8 @@
      so the page is unaffected without JS. */}}
 <button class="console-launch" type="button" aria-controls="console-win" aria-expanded="false" hidden>$ console</button>
 
-{{ $font := resources.Get "figlet/heading.flf" }}
-<section id="console-win" class="console" aria-label="Console" data-title="{{ site.Title }}" data-font="{{ $font.Content | base64Encode }}" hidden>
+{{ $font := resources.Get "figlet/heading.flf" | resources.Fingerprint }}
+<section id="console-win" class="console" aria-label="Console" data-title="{{ site.Title }}" data-font-src="{{ $font.RelPermalink }}" hidden>
   <div class="console__bar">
     <span class="console__title">console</span>
     <span class="console__actions">

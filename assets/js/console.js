@@ -273,16 +273,23 @@
         document.addEventListener("pointerup", up);
       });
 
-      var fig = null;
-      try { fig = parseFig(atob(root.dataset.font || "")); } catch (e) { fig = null; }
-      var art = document.createElement("pre");
-      art.className = "console__banner-art";
-      art.setAttribute("aria-hidden", "true"); // decorative ASCII — keep it out of the aria-live log
-      art.textContent = banner(root.dataset.title || "", fig).join("\n");
-      log.appendChild(art);
       write({ text: "\n" });
       write({ text: "type `help` to see available commands" });
       launch.hidden = false;
+
+      // Banner: fetch the figfont (a cached, fingerprinted asset — not inlined
+      // base64 per page) and render it above the welcome text once it arrives.
+      if (root.dataset.fontSrc) {
+        fetch(root.dataset.fontSrc).then(function (r) { return r.text(); }).then(function (txt) {
+          var fig = null;
+          try { fig = parseFig(txt); } catch (e) { fig = null; }
+          var art = document.createElement("pre");
+          art.className = "console__banner-art";
+          art.setAttribute("aria-hidden", "true"); // decorative ASCII — keep it out of the aria-live log
+          art.textContent = banner(root.dataset.title || "", fig).join("\n");
+          log.insertBefore(art, log.firstChild);
+        }).catch(function () {}); // no banner if the font can't load — page still works
+      }
     }
   }
 
