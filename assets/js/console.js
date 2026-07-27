@@ -150,14 +150,14 @@
         log.appendChild(el);
       };
 
-      // ---- 8-bit soundtrack: square-wave lead + bass, WebAudio, no assets ----
-      // A-minor chiptune loop, 32 eighth-notes. midi note, 0 = rest.
+      // ---- 8-bit soundtrack: calm C-major pentatonic, WebAudio, no assets ----
+      // 32 eighth-notes. midi note, 0 = rest. Sparse melody that rings.
       var chiptune = (function () {
-        var lead = [69, 0, 72, 76, 74, 0, 72, 69, 71, 0, 74, 76, 77, 76, 74, 72,
-                    69, 0, 72, 76, 81, 0, 79, 77, 76, 0, 72, 74, 76, 72, 69, 0];
-        var bass = [45, 45, 52, 52, 41, 41, 48, 48, 43, 43, 50, 50, 40, 40, 47, 47,
-                    45, 45, 52, 52, 41, 41, 48, 48, 45, 45, 43, 43, 40, 40, 47, 47];
-        var spn = 60 / 132 / 2; // seconds per eighth-note at 132bpm
+        var lead = [72, 0, 76, 0, 79, 0, 76, 0, 74, 0, 77, 0, 81, 0, 79, 0,
+                    72, 0, 76, 0, 84, 0, 79, 0, 81, 0, 79, 0, 76, 0, 74, 0];
+        var bass = [48, 0, 0, 0, 0, 0, 0, 0, 45, 0, 0, 0, 0, 0, 0, 0,
+                    41, 0, 0, 0, 0, 0, 0, 0, 43, 0, 0, 0, 0, 0, 0, 0];
+        var spn = 60 / 84 / 2; // seconds per eighth-note at a gentle 84bpm
         var ctx, master, timer, nextTime, step, playing = false, vol = 0.5;
         var freq = function (m) { return 440 * Math.pow(2, (m - 69) / 12); };
         var voice = function (m, t, dur, type, vol) {
@@ -165,14 +165,14 @@
           var o = ctx.createOscillator(), g = ctx.createGain();
           o.type = type; o.frequency.value = freq(m);
           g.gain.setValueAtTime(0.0001, t);
-          g.gain.exponentialRampToValueAtTime(vol, t + 0.008);
-          g.gain.exponentialRampToValueAtTime(0.0001, t + dur * 0.9);
+          g.gain.exponentialRampToValueAtTime(vol, t + 0.04); // soft attack
+          g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
           o.connect(g); g.connect(master); o.start(t); o.stop(t + dur);
         };
         var tick = function () {
           while (nextTime < ctx.currentTime + 0.12) {
-            voice(lead[step], nextTime, spn, "square", 0.18);
-            voice(bass[step], nextTime, spn, "square", 0.10);
+            voice(lead[step], nextTime, spn * 2.2, "triangle", 0.14); // let it ring
+            voice(bass[step], nextTime, spn * 7, "sine", 0.12);       // slow pad
             step = (step + 1) % lead.length;
             nextTime += spn;
           }
