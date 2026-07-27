@@ -27,6 +27,10 @@ themesDir = "../.."
 [markup.goldmark.renderer]
   unsafe = true
 
+# Syntax highlighting via CSS classes so the theme (main.css) colours tokens.
+[markup.highlight]
+  noClasses = false
+
 # LaTeX math: $...$ / \(...\) inline, $$...$$ / \[...\] block
 [markup.goldmark.extensions.passthrough]
   enable = true

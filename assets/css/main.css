@@ -440,7 +440,28 @@ main,
   padding: 0.1em 0.35em;
   border: 1px solid var(--border);
   border-radius: 3px;
+  color: var(--code);
 }
+
+/* syntax highlighting — Chroma token classes mapped to the pop palette so
+   every theme colours code (config: markup.highlight.noClasses = false) */
+.chroma { background: transparent; }
+.chroma .c, .chroma .ch, .chroma .cm, .chroma .c1, .chroma .cs,
+.chroma .cp, .chroma .cpf { color: var(--muted); font-style: italic; } /* comments */
+.chroma .k, .chroma .kc, .chroma .kd, .chroma .kn, .chroma .kp,
+.chroma .kr, .chroma .kt { color: var(--c-pink); } /* keywords */
+.chroma .o, .chroma .ow { color: var(--c-pink); } /* operators */
+.chroma .s, .chroma .sa, .chroma .sb, .chroma .sc, .chroma .dl, .chroma .sd,
+.chroma .s2, .chroma .se, .chroma .sh, .chroma .si, .chroma .sx, .chroma .sr,
+.chroma .s1, .chroma .ss { color: var(--c-yellow); } /* strings */
+.chroma .m, .chroma .mb, .chroma .mf, .chroma .mh, .chroma .mi,
+.chroma .il, .chroma .mo { color: var(--c-purple); } /* numbers */
+.chroma .nf, .chroma .fm { color: var(--c-green); } /* function names */
+.chroma .nb, .chroma .bp, .chroma .nc, .chroma .nn,
+.chroma .ne, .chroma .nt { color: var(--c-cyan); } /* builtins, classes, tags */
+.chroma .nd, .chroma .nl { color: var(--c-orange); } /* decorators, labels */
+.chroma .na, .chroma .nv, .chroma .vc, .chroma .vg,
+.chroma .vi { color: var(--c-blue); } /* attributes, variables */
 
 /* ---- post nav ---- */
 .post-nav {
