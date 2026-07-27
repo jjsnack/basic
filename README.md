@@ -4,6 +4,9 @@ A minimal, black-and-white Hugo theme for text-first blogs. Pure monochrome
 until you hover something clickable — then a single accent colour pops. Ships
 with light / dark / auto modes (no flash on load, remembers your choice).
 
+**Live demo:** https://jjsnack.github.io/basic/ (the `exampleSite/`, built and
+deployed on every push).
+
 ## Install
 
 **As a Hugo Module** (recommended):
@@ -110,6 +113,13 @@ One line in `assets/css/main.css`:
 ```css
 --accent: #ff2d55;
 ```
+
+## Demo deployment
+
+`.github/workflows/pages.yml` builds `exampleSite/` with Hugo extended and
+publishes it to GitHub Pages on every push to `main`. To enable it on your
+fork: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+The workflow injects the correct `baseURL` for project pages automatically.
 
 ## Requirements
 
