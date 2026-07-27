@@ -1,9 +1,7 @@
 {{ define "main" }}
-  <header class="page-head">
-    <h1>{{ site.Title }}</h1>
-    {{ with .Content }}<div class="page-intro">{{ . }}</div>
-    {{ else }}{{ with site.Params.description }}<p class="page-intro">{{ . }}</p>{{ end }}{{ end }}
-  </header>
+  {{/* No h1 — the site title in the header already carries it. Keep the intro only. */}}
+  {{ $intro := or .Content site.Params.description }}
+  {{ with $intro }}<header class="page-head"><div class="page-intro">{{ . }}</div></header>{{ end }}
   {{ partial "topics.html" . }}
   {{ partial "post-list.html" (where site.RegularPages "Type" "posts") }}
 {{ end }}
