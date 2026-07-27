@@ -1,0 +1,216 @@
+/* basic — a small floating terminal. No deps. Hidden until the launcher opens it;
+   the page works fine without it. */
+(function () {
+  "use strict";
+
+  // ---- pure core (side-effect-free so `node console.js` can self-check) ----
+
+  function parse(input) {
+    var parts = String(input).trim().split(/\s+/);
+    return { name: (parts[0] || "").toLowerCase(), args: parts.slice(1) };
+  }
+
+  // Minimal FIGfont parser + renderer (full-width, no smushing). No deps.
+  function parseFig(txt) {
+    var lines = String(txt).split("\n");
+    var head = lines[0].split(" ");
+    var hard = head[0].slice(-1);            // hardblank char (last of signature)
+    var height = parseInt(head[1], 10);
+    var comment = parseInt(head[5], 10);
+    if (!(height > 0)) return null;
+    var map = {}, idx = 1 + comment;
+    for (var c = 32; c <= 126; c++) {
+      var glyph = [];
+      for (var r = 0; r < height; r++) {
+        var line = (lines[idx++] || "").replace(/\r$/, "");
+        var end = line.slice(-1);
+        if (end) line = line.replace(new RegExp(end.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "+$"), "");
+        glyph.push(line.split(hard).join(" "));
+      }
+      map[c] = glyph;
+    }
+    return { height: height, map: map };
+  }
+
+  function banner(text, fig) {
+    if (!fig) return [String(text)];
+    var rows = [];
+    for (var r = 0; r < fig.height; r++) rows.push("");
+    var s = String(text);
+    for (var i = 0; i < s.length; i++) {
+      var g = fig.map[s.charCodeAt(i)] || fig.map[32];
+      for (var r2 = 0; r2 < fig.height; r2++) rows[r2] += g[r2] || "";
+    }
+    // drop fully-blank leading/trailing rows some fonts pad with
+    while (rows.length && !rows[0].trim()) rows.shift();
+    while (rows.length && !rows[rows.length - 1].trim()) rows.pop();
+    return rows;
+  }
+
+  // run(input, ctx) -> { lines:[{text}], clear?, close?, theme? }.  ctx.history: string[]
+  function run(input, ctx) {
+    var cmd = parse(input);
+    var history = (ctx && ctx.history) || [];
+
+    switch (cmd.name) {
+      case "":
+        return { lines: [] };
+
+      case "help":
+        return { lines: [
+          { text: "commands" },
+          { text: "  theme <mode>  light | dark | auto" },
+          { text: "  history       show command history" },
+          { text: "  clear         clear the screen" },
+          { text: "  close         close the console" },
+          { text: "  help          this message" }
+        ] };
+
+      case "theme": {
+        var mode = (cmd.args[0] || "").toLowerCase();
+        if (["light", "dark", "auto"].indexOf(mode) === -1) {
+          return { lines: [{ text: "theme: use light | dark | auto." }] };
+        }
+        return { lines: [{ text: "theme set to " + mode + "." }], theme: mode };
+      }
+
+      case "history":
+        if (!history.length) return { lines: [{ text: "no history yet." }] };
+        return { lines: history.map(function (h, i) {
+          return { text: (i + 1 < 10 ? " " : "") + (i + 1) + "  " + h };
+        }) };
+
+      case "clear":
+        return { lines: [], clear: true };
+
+      case "close":
+        return { lines: [{ text: "bye." }], close: true };
+
+      default:
+        return { lines: [{ text: cmd.name + ": command not found. Type `help`." }] };
+    }
+  }
+
+  // ---- browser wiring ----
+
+  if (typeof document !== "undefined") {
+    var launch = document.querySelector(".console-launch");
+    var root = document.querySelector(".console");
+    if (launch && root) {
+      var bar = root.querySelector(".console__bar");
+      var log = root.querySelector(".console__log");
+      var form = root.querySelector(".console__form");
+      var input = root.querySelector(".console__input");
+      var expandBtn = root.querySelector(".console__expand");
+      var closeBtn = root.querySelector(".console__close");
+      var history = [];
+
+      var write = function (line, kind) {
+        var el = document.createElement("div");
+        el.className = "console__line" + (kind ? " console__line--" + kind : "");
+        el.textContent = line.text;
+        log.appendChild(el);
+      };
+
+      var applyTheme = function (mode) {
+        if (mode === "auto") { localStorage.removeItem("theme"); delete document.documentElement.dataset.theme; }
+        else { localStorage.setItem("theme", mode); document.documentElement.dataset.theme = mode; }
+      };
+
+      var open = function () {
+        root.hidden = false;
+        launch.setAttribute("aria-expanded", "true");
+        input.focus();
+      };
+      var close = function () {
+        root.hidden = true;
+        root.classList.remove("console--docked");
+        root.style.left = root.style.top = root.style.right = root.style.bottom = "";
+        expandBtn.setAttribute("aria-pressed", "false");
+        launch.setAttribute("aria-expanded", "false");
+        launch.focus();
+      };
+      var toggleDock = function () {
+        var docked = root.classList.toggle("console--docked");
+        if (docked) { root.style.left = root.style.top = root.style.right = root.style.bottom = ""; }
+        expandBtn.setAttribute("aria-pressed", docked ? "true" : "false");
+        input.focus();
+      };
+
+      launch.addEventListener("click", open);
+      closeBtn.addEventListener("click", close);
+      expandBtn.addEventListener("click", toggleDock);
+
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && !root.hidden) close();
+      });
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var value = input.value;
+        write({ text: "$ " + value }, "cmd");
+        if (value.trim()) history.push(value.trim());
+        var res = run(value, { history: history });
+        if (res.clear) log.innerHTML = "";
+        res.lines.forEach(function (l) { write(l); });
+        if (res.theme) applyTheme(res.theme);
+        input.value = "";
+        log.scrollTop = log.scrollHeight;
+        if (res.close) close();
+      });
+
+      root.querySelector(".console__screen").addEventListener("click", function () { input.focus(); });
+
+      // Drag by the title bar (skipped while docked).
+      bar.addEventListener("pointerdown", function (e) {
+        if (e.target.closest(".console__btn") || root.classList.contains("console--docked")) return;
+        var rect = root.getBoundingClientRect();
+        var dx = e.clientX - rect.left, dy = e.clientY - rect.top;
+        var move = function (ev) {
+          var x = Math.max(0, Math.min(window.innerWidth - rect.width, ev.clientX - dx));
+          var y = Math.max(0, Math.min(window.innerHeight - rect.height, ev.clientY - dy));
+          root.style.left = x + "px"; root.style.top = y + "px";
+          root.style.right = root.style.bottom = "auto";
+        };
+        var up = function () {
+          document.removeEventListener("pointermove", move);
+          document.removeEventListener("pointerup", up);
+        };
+        document.addEventListener("pointermove", move);
+        document.addEventListener("pointerup", up);
+      });
+
+      var fig = null;
+      try { fig = parseFig(atob(root.dataset.font || "")); } catch (e) { fig = null; }
+      var art = document.createElement("pre");
+      art.className = "console__banner-art";
+      art.textContent = banner(root.dataset.title || "", fig).join("\n");
+      log.appendChild(art);
+      write({ text: "\n" });
+      write({ text: "type `help` to see available commands" });
+      launch.hidden = false;
+    }
+  }
+
+  // ---- self-check: `node assets/js/console.js` ----
+
+  if (typeof module !== "undefined" && require.main === module) {
+    var assert = require("assert");
+    assert.strictEqual(run("", {}).lines.length, 0);
+    assert.ok(/theme <mode>/.test(run("help", {}).lines[1].text));
+    assert.strictEqual(run("theme dark", {}).theme, "dark");
+    assert.ok(/use light/.test(run("theme purple", {}).lines[0].text));
+    assert.strictEqual(run("clear", {}).clear, true);
+    assert.strictEqual(run("close", {}).close, true);
+    assert.ok(/no history/.test(run("history", { history: [] }).lines[0].text));
+    assert.ok(/theme dark/.test(run("history", { history: ["theme dark"] }).lines[0].text));
+    assert.ok(/not found/.test(run("wat", {}).lines[0].text));
+    assert.deepStrictEqual(banner("x", null), ["x"], "no font -> plain title");
+    var flf = require("fs").readFileSync(__dirname + "/../figlet/heading.flf", "utf8");
+    var fig = parseFig(flf);
+    assert.ok(fig && fig.height > 0, "figfont parses");
+    var b = banner("basic", fig);
+    assert.ok(b.length > 0 && b.some(function (r) { return /\S/.test(r); }), "banner renders glyphs");
+    console.log("console.js self-check passed\n" + b.join("\n"));
+  }
+})();

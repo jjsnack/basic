@@ -1,0 +1,25 @@
+{{/* Floating terminal. Launcher + window both stay hidden until JS enhances them,
+     so the page is unaffected without JS. */}}
+<button class="console-launch" type="button" aria-controls="console-win" aria-expanded="false" hidden>$ console</button>
+
+{{ $font := resources.Get "figlet/heading.flf" }}
+<section id="console-win" class="console" aria-label="Console" data-title="{{ site.Title }}" data-font="{{ $font.Content | base64Encode }}" hidden>
+  <div class="console__bar">
+    <span class="console__title">console</span>
+    <span class="console__actions">
+      <button class="console__btn console__expand" type="button" aria-pressed="false" aria-label="Dock to bottom half">⤢</button>
+      <button class="console__btn console__close" type="button" aria-label="Close console">×</button>
+    </span>
+  </div>
+  <div class="console__screen">
+    <div class="console__log" role="log" aria-live="polite" aria-label="Console output"></div>
+    <form class="console__form" autocomplete="off">
+      <span class="console__prompt" aria-hidden="true">$</span>
+      <input class="console__input" type="text" spellcheck="false" autocapitalize="off"
+        aria-label="Type a command and press Enter. Type help to list commands." />
+    </form>
+  </div>
+</section>
+
+{{ $js := resources.Get "js/console.js" | resources.Minify | resources.Fingerprint }}
+<script src="{{ $js.RelPermalink }}" defer></script>
