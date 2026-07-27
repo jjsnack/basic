@@ -34,4 +34,10 @@ function hello() {
 }
 ```
 
+## Some math
+
+Inline, like $E = mc^2$, sits in the sentence. Display math gets its own line:
+
+$$\int_{-\infty}^{\infty} e^{-x^2}\,dx = \sqrt{\pi}$$
+
 That's it.

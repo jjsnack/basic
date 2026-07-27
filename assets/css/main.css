@@ -195,6 +195,15 @@ main,
   text-align: center;
 }
 
+/* math (MathML) */
+.post__body math { font-size: 1.05em; }
+.post__body math[display="block"] {
+  display: block;
+  margin: 1.75rem 0;
+  overflow-x: auto;
+  text-align: center;
+}
+
 /* mermaid diagrams */
 .mermaid { margin: 2rem 0; text-align: center; overflow-x: auto; }
 .mermaid:not([data-processed]) { visibility: hidden; } /* hide raw source until rendered */

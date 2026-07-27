@@ -22,3 +22,10 @@ themesDir = "../.."
 
 [markup.goldmark.renderer]
   unsafe = true
+
+# LaTeX math: $...$ / \(...\) inline, $$...$$ / \[...\] block
+[markup.goldmark.extensions.passthrough]
+  enable = true
+  [markup.goldmark.extensions.passthrough.delimiters]
+    block = [['\[', '\]'], ['$$', '$$']]
+    inline = [['\(', '\)'], ['$', '$']]

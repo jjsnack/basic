@@ -70,6 +70,23 @@ caption), lazy-loaded:
 ![This caption shows under the image.](/img/photo.jpg)
 ```
 
+## LaTeX math
+
+Write `$...$` (or `\(...\)`) inline and `$$...$$` (or `\[...\]`) for display.
+Rendered to MathML at build time — no client-side JavaScript, browsers display
+it natively. Requires the passthrough extension in site config:
+
+```toml
+[markup.goldmark.extensions.passthrough]
+  enable = true
+  [markup.goldmark.extensions.passthrough.delimiters]
+    block  = [['\[', '\]'], ['$$', '$$']]
+    inline = [['\(', '\)'], ['$', '$']]
+```
+
+Note: with `$` as an inline delimiter, a literal `$` in prose needs escaping
+(`\$`). Drop the `['$', '$']` line if you'd rather not.
+
 ## Mermaid diagrams
 
 Fence a diagram with `mermaid` and it renders client-side. The library loads

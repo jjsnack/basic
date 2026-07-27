@@ -1,0 +1,2 @@
+{{- /* Render LaTeX to MathML server-side — no client JS, browsers display it natively. */ -}}
+{{- transform.ToMath .Inner (dict "displayMode" (eq .Type "block") "output" "mathml") -}}
