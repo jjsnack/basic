@@ -1,4 +1,4 @@
-baseURL = "https://jjsnack.github.io/basic/"
+baseURL = "https://example.org/"
 languageCode = "en"
 title = "basic"
 theme = "basic"
