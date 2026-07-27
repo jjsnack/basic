@@ -137,6 +137,111 @@ main,
 .page-head h1 { margin: 0 0 0.5rem; font-size: 1.6rem; letter-spacing: -0.01em; }
 .page-intro { color: var(--muted); max-width: 46ch; }
 
+/* ---- console (floating terminal) ---- */
+.console-launch {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 50;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  padding: 0.5em 0.9em;
+  background: var(--bg);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+}
+.console-launch:hover,
+.console-launch:focus-visible { color: var(--accent); border-color: var(--accent); }
+
+.console {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 51;
+  /* roughly an 80x24 terminal */
+  width: min(84ch, calc(100vw - 2rem));
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  box-shadow: 0 10px 34px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  display: flex;
+  flex-direction: column;
+  height: min(90vh, 36rem);
+}
+/* the display:flex above beats the UA [hidden] rule, so hide explicitly */
+.console[hidden] { display: none; }
+/* docked: pinned to the bottom quarter of the viewport */
+.console--docked {
+  inset: auto 0 0 0;
+  width: 100%;
+  height: 25vh;
+  max-height: 25vh;
+  border-radius: 0;
+  border-inline: 0;
+  border-bottom: 0;
+}
+.console__bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  cursor: move;
+  user-select: none;
+  touch-action: none;
+}
+.console__actions { margin-left: auto; display: flex; gap: 0.15rem; }
+.console__btn {
+  background: none;
+  border: 0;
+  padding: 0 0.25em;
+  color: var(--muted);
+  font: inherit;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.console__btn:hover,
+.console__btn:focus-visible { color: var(--accent); }
+.console__title { color: var(--muted); font-size: 0.75rem; }
+.console__screen {
+  padding: 0.75rem;
+  cursor: text;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.console__log { margin: 0; flex: 1; min-height: 0; overflow: auto; }
+.console__line { display: block; white-space: pre-wrap; color: var(--fg); }
+.console__line--cmd { color: var(--muted); }
+.console__banner-art {
+  margin: 0 0 0.5rem;
+  white-space: pre;
+  line-height: 1.02;
+  color: var(--accent);
+  overflow-x: auto;
+}
+.console__form { display: flex; align-items: baseline; gap: 0.5em; margin-top: 0.25rem; }
+.console__prompt { color: var(--accent); }
+.console__input {
+  flex: 1;
+  min-width: 0;
+  background: none;
+  border: 0;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  caret-color: var(--accent);
+}
+.console__input:focus { outline: none; }
+
 /* ---- topics (taxonomy list) ---- */
 .topics {
   display: flex;
