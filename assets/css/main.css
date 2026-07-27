@@ -391,4 +391,7 @@ main,
 @media (max-width: 34rem) {
   body { font-size: 17px; }
   .post__title { font-size: 1.6rem; }
+  /* Console is desktop-only; keyboard-driven terminal has no place on mobile. */
+  .console-launch,
+  .console { display: none !important; }
 }
