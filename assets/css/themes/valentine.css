@@ -1,0 +1,14 @@
+/* Valentine — blush ground, burgundy ink, all pinks + rose/crimson pops
+   (no purple). Concatenated after main.css (see baseof.html). */
+:root[data-theme="valentine"] {
+  --bg: #fff0f5; --fg: #4a0d20; --muted: #a86b7e; --border: #f3cdd9;
+  --accent: #c71f5d; --accent-fg: #ffffff; --selection: #ffd6e5; --code: #b0185a;
+  --c-red: #a4133c; --c-orange: #d81159; --c-yellow: #b23a48; --c-green: #7b2d43;
+  --c-cyan: #c9184a; --c-blue: #8c1c3f; --c-purple: #e05780; --c-pink: #ff5c8a;
+  /* sets: pinks + crimson, each surface distinct */
+  --link: var(--c-red);
+  --pill: var(--c-pink);   --pill-fg: #ffffff;
+  --row:  var(--c-cyan);   --row-fg:  #ffffff;
+  --term: var(--c-orange); --term-fg: #ffffff;
+  --focus: var(--c-pink);
+}
