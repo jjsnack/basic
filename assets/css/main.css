@@ -228,7 +228,6 @@ main,
   color: var(--accent);
   overflow-x: auto;
 }
-a.console__line:hover { color: var(--accent); }
 .console__form { display: flex; align-items: baseline; gap: 0.5em; margin-top: 0.25rem; }
 .console__prompt { color: var(--accent); }
 .console__input {
