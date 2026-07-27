@@ -320,7 +320,7 @@ main,
 .post-list__item:last-child { border-bottom: 1px solid var(--border); }
 .post-list__link {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 1rem;
   padding-block: 0.9rem;
