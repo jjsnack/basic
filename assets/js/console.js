@@ -59,19 +59,35 @@
       case "help":
         return { lines: [
           { text: "commands" },
-          { text: "  theme <mode>  light | dark | auto" },
-          { text: "  history       show command history" },
-          { text: "  clear         clear the screen" },
-          { text: "  close         close the console" },
-          { text: "  help          this message" }
+          { text: "  theme    : changes the theme of the site" },
+          { text: "  music    : plays an 8-bit soundtrack" },
+          { text: "  history  : shows command history" },
+          { text: "  clear    : clears the screen" },
+          { text: "  close    : closes the console" },
+          { text: "  help     : this message" }
         ] };
 
       case "theme": {
-        var mode = (cmd.args[0] || "").toLowerCase();
-        if (["light", "dark", "auto"].indexOf(mode) === -1) {
-          return { lines: [{ text: "theme: use light | dark | auto." }] };
+        var sub = (cmd.args[0] || "").toLowerCase();
+        var modes = ["light", "dark", "auto"];
+        if (sub === "list") {
+          return { lines: modes.map(function (m) { return { text: "   " + m }; }) };
         }
-        return { lines: [{ text: "theme set to " + mode + "." }], theme: mode };
+        if (sub === "set") {
+          var mode = (cmd.args[1] || "").toLowerCase();
+          if (modes.indexOf(mode) === -1) return { lines: [{ text: "usage: theme set <light | dark | auto>" }] };
+          return { lines: [{ text: "theme set to " + mode + "." }], theme: mode };
+        }
+        return { lines: [
+          { text: "Usage:  theme <subcommand> ..." },
+          { text: "" },
+          { text: "   Changes the theme of the site" },
+          { text: "" },
+          { text: "Subcommands:" },
+          { text: "" },
+          { text: "   list : List available themes" },
+          { text: "   set  : Set the theme" }
+        ] };
       }
 
       case "history":
@@ -79,6 +95,28 @@
         return { lines: history.map(function (h, i) {
           return { text: (i + 1 < 10 ? " " : "") + (i + 1) + "  " + h };
         }) };
+
+      case "music": {
+        var sub = (cmd.args[0] || "").toLowerCase();
+        if (sub === "play") return { lines: [], music: "on" };
+        if (sub === "stop") return { lines: [], music: "off" };
+        if (sub === "volume") {
+          var v = parseInt(cmd.args[1], 10);
+          if (!(v >= 0 && v <= 10)) return { lines: [{ text: "usage: music volume <0-10>" }] };
+          return { lines: [{ text: "volume set to " + v + "." }], volume: v };
+        }
+        return { lines: [
+          { text: "Usage:  music <subcommand> ..." },
+          { text: "" },
+          { text: "   Play some tunes" },
+          { text: "" },
+          { text: "Subcommands:" },
+          { text: "" },
+          { text: "   play   : Play music" },
+          { text: "   stop   : Stop music" },
+          { text: "   volume : Set music volume [0-10]" }
+        ] };
+      }
 
       case "clear":
         return { lines: [], clear: true };
@@ -112,6 +150,49 @@
         log.appendChild(el);
       };
 
+      // ---- 8-bit soundtrack: square-wave lead + bass, WebAudio, no assets ----
+      // A-minor chiptune loop, 32 eighth-notes. midi note, 0 = rest.
+      var chiptune = (function () {
+        var lead = [69, 0, 72, 76, 74, 0, 72, 69, 71, 0, 74, 76, 77, 76, 74, 72,
+                    69, 0, 72, 76, 81, 0, 79, 77, 76, 0, 72, 74, 76, 72, 69, 0];
+        var bass = [45, 45, 52, 52, 41, 41, 48, 48, 43, 43, 50, 50, 40, 40, 47, 47,
+                    45, 45, 52, 52, 41, 41, 48, 48, 45, 45, 43, 43, 40, 40, 47, 47];
+        var spn = 60 / 132 / 2; // seconds per eighth-note at 132bpm
+        var ctx, master, timer, nextTime, step, playing = false, vol = 0.5;
+        var freq = function (m) { return 440 * Math.pow(2, (m - 69) / 12); };
+        var voice = function (m, t, dur, type, vol) {
+          if (!m) return;
+          var o = ctx.createOscillator(), g = ctx.createGain();
+          o.type = type; o.frequency.value = freq(m);
+          g.gain.setValueAtTime(0.0001, t);
+          g.gain.exponentialRampToValueAtTime(vol, t + 0.008);
+          g.gain.exponentialRampToValueAtTime(0.0001, t + dur * 0.9);
+          o.connect(g); g.connect(master); o.start(t); o.stop(t + dur);
+        };
+        var tick = function () {
+          while (nextTime < ctx.currentTime + 0.12) {
+            voice(lead[step], nextTime, spn, "square", 0.18);
+            voice(bass[step], nextTime, spn, "square", 0.10);
+            step = (step + 1) % lead.length;
+            nextTime += spn;
+          }
+        };
+        return {
+          on: function () {
+            if (playing) return;
+            if (!ctx) {
+              ctx = new (window.AudioContext || window.webkitAudioContext)();
+              master = ctx.createGain(); master.gain.value = vol; master.connect(ctx.destination);
+            }
+            ctx.resume();
+            playing = true; step = 0; nextTime = ctx.currentTime + 0.05;
+            tick(); timer = setInterval(tick, 25);
+          },
+          off: function () { playing = false; clearInterval(timer); },
+          setVolume: function (n) { vol = n / 10; if (master) master.gain.value = vol; }
+        };
+      })();
+
       var applyTheme = function (mode) {
         if (mode === "auto") { localStorage.removeItem("theme"); delete document.documentElement.dataset.theme; }
         else { localStorage.setItem("theme", mode); document.documentElement.dataset.theme = mode; }
@@ -123,6 +204,7 @@
         input.focus();
       };
       var close = function () {
+        chiptune.off();
         root.hidden = true;
         root.classList.remove("console--docked");
         root.style.left = root.style.top = root.style.right = root.style.bottom = "";
@@ -154,6 +236,9 @@
         if (res.clear) log.innerHTML = "";
         res.lines.forEach(function (l) { write(l); });
         if (res.theme) applyTheme(res.theme);
+        if (res.music === "on") { chiptune.on(); write({ text: "♪ music on" }); }
+        if (res.music === "off") { chiptune.off(); write({ text: "music off" }); }
+        if (res.volume != null) chiptune.setVolume(res.volume);
         input.value = "";
         log.scrollTop = log.scrollHeight;
         if (res.close) close();
@@ -197,9 +282,16 @@
   if (typeof module !== "undefined" && require.main === module) {
     var assert = require("assert");
     assert.strictEqual(run("", {}).lines.length, 0);
-    assert.ok(/theme <mode>/.test(run("help", {}).lines[1].text));
-    assert.strictEqual(run("theme dark", {}).theme, "dark");
-    assert.ok(/use light/.test(run("theme purple", {}).lines[0].text));
+    assert.ok(/theme/.test(run("help", {}).lines[1].text));
+    assert.strictEqual(run("theme set dark", {}).theme, "dark");
+    assert.ok(/usage: theme set/.test(run("theme set purple", {}).lines[0].text));
+    assert.ok(/dark/.test(run("theme list", {}).lines[1].text));
+    assert.ok(/Subcommands/.test(run("theme", {}).lines[4].text));
+    assert.strictEqual(run("music play", {}).music, "on");
+    assert.strictEqual(run("music stop", {}).music, "off");
+    assert.strictEqual(run("music volume 7", {}).volume, 7);
+    assert.ok(/0-10/.test(run("music volume 99", {}).lines[0].text));
+    assert.ok(/Subcommands/.test(run("music", {}).lines[4].text));
     assert.strictEqual(run("clear", {}).clear, true);
     assert.strictEqual(run("close", {}).close, true);
     assert.ok(/no history/.test(run("history", { history: [] }).lines[0].text));
