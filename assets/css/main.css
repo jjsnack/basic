@@ -28,6 +28,7 @@
   --muted: #8a8a8a;
   --border: #e6e6e6;
   --accent: #b5451e; /* the pop of colour — change this one line to re-tint */
+  --accent-fg: #ffffff; /* text/glyph colour on an accent fill */
 
   --measure: 68ch;
   --pad: 1.5rem;
@@ -156,9 +157,14 @@ main,
   border-radius: 999px;
   cursor: pointer;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
 }
 .console-launch:hover,
-.console-launch:focus-visible { color: var(--accent); border-color: var(--accent); }
+.console-launch:focus-visible {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-fg);
+}
 
 .console {
   position: fixed;
@@ -204,15 +210,17 @@ main,
 .console__btn {
   background: none;
   border: 0;
-  padding: 0 0.25em;
+  padding: 0.1em 0.4em;
+  border-radius: 4px;
   color: var(--muted);
   font: inherit;
   font-size: 1rem;
   line-height: 1;
   cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
 }
 .console__btn:hover,
-.console__btn:focus-visible { color: var(--accent); }
+.console__btn:focus-visible { background: var(--accent); color: var(--accent-fg); }
 .console__title { color: var(--muted); font-size: 0.75rem; }
 .console__screen {
   padding: 0.75rem;
@@ -262,10 +270,15 @@ main,
   padding: 0.4em 0.85em;
   border: 1px solid var(--border);
   border-radius: 999px;
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
 }
-.topics__item:hover { border-color: var(--accent); }
+.topics__item:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-fg);
+}
 .topics__count { color: var(--muted); }
-.topics__item:hover .topics__count { color: var(--accent); }
+.topics__item:hover .topics__count { color: var(--accent-fg); }
 
 /* ---- post list ---- */
 .post-list { list-style: none; margin: 0; padding: 0; }
