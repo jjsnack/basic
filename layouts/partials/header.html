@@ -2,29 +2,5 @@
   <a class="site-title" href="{{ "/" | relURL }}">{{ site.Title }}</a>
   <nav class="site-nav">
     {{ range site.Menus.main }}<a href="{{ .URL | relURL }}"{{ if $.IsMenuCurrent "main" . }} class="current"{{ end }}>{{ .Name }}</a>{{ end }}
-    <button class="theme-toggle" type="button" aria-label="Toggle colour theme" title="Toggle light / dark / auto">
-      <span class="theme-toggle__label" aria-hidden="true"></span>
-    </button>
   </nav>
 </header>
-<script>
-  (function () {
-    var btn = document.querySelector(".theme-toggle");
-    var label = btn.querySelector(".theme-toggle__label");
-    var order = ["auto", "light", "dark"];
-    var glyph = { auto: "◐", light: "○", dark: "●" };
-    function current() { return localStorage.getItem("theme") || "auto"; }
-    function render(m) {
-      label.textContent = glyph[m] || "◆"; // colour themes (set via console) get a generic glyph
-      if (m === "auto") delete document.documentElement.dataset.theme;
-      else document.documentElement.dataset.theme = m;
-    }
-    render(current());
-    btn.addEventListener("click", function () {
-      var next = order[(order.indexOf(current()) + 1) % order.length];
-      if (next === "auto") localStorage.removeItem("theme");
-      else localStorage.setItem("theme", next);
-      render(next);
-    });
-  })();
-</script>

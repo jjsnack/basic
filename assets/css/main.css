@@ -130,9 +130,7 @@ a { color: inherit; text-decoration: none; }
 
 /* ---- hover pops of colour: every clickable thing lights up ---- */
 a:hover,
-a:focus-visible,
-.theme-toggle:hover,
-.theme-toggle:focus-visible { color: var(--link); }
+a:focus-visible { color: var(--link); }
 .post__body a { text-decoration: underline; text-underline-offset: 2px; text-decoration-color: var(--border); }
 .post__body a:hover { text-decoration-color: var(--link); }
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
@@ -163,30 +161,6 @@ main,
 .site-title { font-family: var(--pixel); font-weight: 400; font-size: 1.75rem; letter-spacing: 0.02em; }
 .site-nav { display: flex; align-items: baseline; gap: 1rem; font-family: var(--mono); font-size: 0.85rem; }
 .site-nav .current { color: var(--link); }
-
-.theme-toggle {
-  background: none;
-  border: 0;
-  padding: 0;
-  cursor: pointer;
-  color: inherit;
-  font: inherit;
-  font-size: 1rem;
-  line-height: 1;
-  position: relative;
-  top: 0px; /* nudge glyph down to sit on the nav baseline */
-}
-.theme-toggle__label {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1em;
-  height: 1em;
-  line-height: 1;
-  transform-origin: 50% 50%;
-  transition: transform 0.3s ease;
-}
-.theme-toggle:hover .theme-toggle__label { transform: rotate(180deg); }
 
 /* ---- back link (term pages) ---- */
 .back-link {
