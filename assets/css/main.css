@@ -220,6 +220,20 @@ main,
 }
 .post__topics a::before { content: "#"; color: var(--border); }
 .post__topics a:hover::before { color: var(--accent); }
+.post__body table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  display: block;
+  overflow-x: auto;
+}
+.post__body th,
+.post__body td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+.post__body th { font-weight: 600; }
 .post__body blockquote {
   margin: 1.5rem 0;
   padding-left: 1rem;
