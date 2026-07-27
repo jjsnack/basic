@@ -24,6 +24,7 @@
       {{ block "main" . }}{{ end }}
     </main>
     {{ partial "footer.html" . }}
+    {{ partial "console.html" . }}
     {{ if .Store.Get "hasMermaid" }}
       {{/* ponytail: mermaid from CDN (Hugo's documented approach); vendor it if you need offline builds. */}}
       <script type="module">
