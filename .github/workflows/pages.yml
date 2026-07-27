@@ -31,7 +31,7 @@ jobs:
       - uses: actions/configure-pages@v5
         id: pages
       - name: Build
-        run: hugo --source=exampleSite --minify --baseURL "https://jjsnack.github.io/basic/"
+        run: hugo --source=exampleSite --minify --baseURL "${{ steps.pages.outputs.base_url }}/"
       - uses: actions/upload-pages-artifact@v3
         with:
           path: exampleSite/public
