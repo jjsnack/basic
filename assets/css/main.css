@@ -290,10 +290,15 @@ main,
   justify-content: space-between;
   gap: 1rem;
   padding-block: 0.9rem;
+  padding-inline: 0.75rem;
+  margin-inline: -0.75rem;
+  border-radius: 2px;
+  transition: background-color 0.1s, color 0.1s;
 }
-.post-list__title { font-weight: 450; }
+.post-list__link:hover { background: var(--accent); color: var(--accent-fg); }
+.post-list__title { font-weight: 450; font-size: 1.25rem; }
 .post-list__date { font-family: var(--mono); font-size: 0.8rem; color: var(--muted); white-space: nowrap; }
-.post-list__link:hover .post-list__date { color: var(--accent); }
+.post-list__link:hover .post-list__date { color: var(--accent-fg); }
 
 /* ---- single post ---- */
 .post__head { margin-bottom: 2.5rem; }
