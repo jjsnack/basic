@@ -107,6 +107,11 @@ body {
   font-size: 18px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  /* sticky-footer column: lets a flowed (non-fixed) footer sit at the viewport
+     bottom on short pages and at the content end on long ones */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 a { color: inherit; text-decoration: none; }
@@ -526,7 +531,8 @@ main { padding-bottom: 6rem; }
    footer would sit on top of the text. Unfix it and let it flow at the page
    bottom; drop the space main reserved for the fixed footer. */
 @media (max-width: 82rem) {
-  .site-footer { position: static; margin: 2rem 1rem 1rem; }
+  /* margin-top:auto shoves the footer to the bottom of the flex column */
+  .site-footer { position: static; margin: auto 1rem 1rem; }
   main { padding-bottom: 1.5rem; }
 }
 
