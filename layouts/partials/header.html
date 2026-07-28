@@ -1,5 +1,5 @@
 <header class="site-header">
-  <a class="site-title" href="{{ "/" | relURL }}">{{ site.Title }}</a>
+  <a class="site-title" href="{{ site.Home.RelPermalink }}">{{ site.Title }}</a>
   <nav class="site-nav">
     {{ range site.Menus.main }}<a href="{{ .URL | relURL }}"{{ if $.IsMenuCurrent "main" . }} class="current"{{ end }}>{{ .Name }}</a>{{ end }}
   </nav>
