@@ -253,14 +253,14 @@ main { padding-bottom: 6rem; }
   bottom: 1rem;
   z-index: 51;
   /* roughly an 80x24 terminal */
-  width: min(84ch, calc(100vw - 2rem));
+  width: min(75.6ch, calc(100vw - 2rem)); /* 10% narrower than the 84ch base */
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 6px;
   box-shadow: 0 10px 34px rgba(0, 0, 0, 0.2);
   overflow: hidden;
   font-family: var(--mono);
-  font-size: 0.738rem; /* 10% smaller; ch-based width tracks it, keeping 80 cols */
+  font-size: 0.82rem;
   display: flex;
   flex-direction: column;
   height: min(90vh, 32.4rem);
