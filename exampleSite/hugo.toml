@@ -1,11 +1,11 @@
 baseURL = "https://example.org/"
-languageCode = "en"
+locale = "en"
 title = "basic"
 theme = "basic"
 themesDir = "../.."
 
 [pagination]
-  pagerSize = 12
+  pagerSize = 6
 
 [params]
   description = "A minimal theme for text-first blogs."

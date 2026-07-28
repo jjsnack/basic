@@ -522,6 +522,14 @@ main { padding-bottom: 6rem; }
 
 .empty { color: var(--muted); }
 
+/* Below ~82rem the centred content column eats its left gutter, so the fixed
+   footer would sit on top of the text. Unfix it and let it flow at the page
+   bottom; drop the space main reserved for the fixed footer. */
+@media (max-width: 82rem) {
+  .site-footer { position: static; margin: 2rem 1rem 1rem; }
+  main { padding-bottom: 1.5rem; }
+}
+
 @media (max-width: 34rem) {
   body { font-size: 17px; }
   .post__title { font-size: 1.6rem; }
