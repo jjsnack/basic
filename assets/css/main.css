@@ -25,7 +25,7 @@
 :root {
   --bg: #ffffff;
   --fg: #111111;
-  --muted: #8a8a8a;
+  --muted: #767676; /* ~4.54:1 on #fff — clears WCAG AA for small text */
   --border: #e6e6e6;
   --accent: #b5451e; /* the pop of colour — change this one line to re-tint */
   --accent-fg: #ffffff; /* text/glyph colour on an accent fill */
@@ -60,11 +60,6 @@
     --fg: #ededed;
     --muted: #7d7d7d;
     --border: #262626;
-  }
-}
-/* dark base shares its pops with the media-query block above */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
     --selection: #33261f;
     --c-red: #ff6b6b; --c-orange: #ffb86c; --c-yellow: #f1fa8c; --c-green: #50fa7b;
     --c-cyan: #8be9fd; --c-blue: #7aa2f7; --c-purple: #bd93f9; --c-pink: #ff79c6;
@@ -88,6 +83,16 @@
 
 * { box-sizing: border-box; }
 
+/* honour reduced-motion: kill transitions/animations for those who ask */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* visually hidden but readable by screen readers (e.g. the home-page h1) */
 .visually-hidden {
   position: absolute;
@@ -107,6 +112,11 @@ body {
   font-size: 18px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  /* sticky-footer column: lets a flowed (non-fixed) footer sit at the viewport
+     bottom on short pages and at the content end on long ones */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 a { color: inherit; text-decoration: none; }
@@ -123,6 +133,7 @@ a:focus-visible { color: var(--link); }
 /* ---- layout ---- */
 .site-header,
 main {
+  width: 100%; /* body is a flex column; without this they shrink to fit-content */
   max-width: var(--measure);
   margin-inline: auto;
   padding-inline: var(--pad);
@@ -248,7 +259,7 @@ main { padding-bottom: 6rem; }
   bottom: 1rem;
   z-index: 51;
   /* roughly an 80x24 terminal */
-  width: min(84ch, calc(100vw - 2rem));
+  width: min(75.6ch, calc(100vw - 2rem)); /* 10% narrower than the 84ch base */
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 6px;
@@ -258,7 +269,7 @@ main { padding-bottom: 6rem; }
   font-size: 0.82rem;
   display: flex;
   flex-direction: column;
-  height: min(90vh, 36rem);
+  height: min(90vh, 32.4rem);
 }
 /* the display:flex above beats the UA [hidden] rule, so hide explicitly */
 .console[hidden] { display: none; }
@@ -521,6 +532,15 @@ main { padding-bottom: 6rem; }
 }
 
 .empty { color: var(--muted); }
+
+/* Below ~82rem the centred content column eats its left gutter, so the fixed
+   footer would sit on top of the text. Unfix it and let it flow at the page
+   bottom; drop the space main reserved for the fixed footer. */
+@media (max-width: 82rem) {
+  /* margin-top:auto shoves the footer to the bottom of the flex column */
+  .site-footer { position: static; margin: auto 1rem 1rem; }
+  main { padding-bottom: 1.5rem; }
+}
 
 @media (max-width: 34rem) {
   body { font-size: 17px; }
