@@ -41,8 +41,9 @@
   --term: var(--accent); --term-fg: var(--accent-fg); /* console: fills, banner, prompt, caret */
   --focus: var(--accent);                            /* focus-visible outline */
 
-  /* pop palette — themes remap these; also feed syntax + mermaid diagrams */
-  --c-red: #c0392b; --c-orange: #cc6a1a; --c-yellow: #b8860b; --c-green: #2e8b57;
+  /* pop palette — themes remap these; also feed syntax + mermaid diagrams.
+     Light-base yellow/green are darkened to clear WCAG AA (4.5:1) as code text. */
+  --c-red: #c0392b; --c-orange: #cc6a1a; --c-yellow: #8a6100; --c-green: #1f7a4d;
   --c-cyan: #1f7a8c; --c-blue: #2c5f8a; --c-purple: #7b4bc4; --c-pink: #b83280;
 
   --measure: 68ch;
@@ -86,6 +87,15 @@
    block matches the dark media query's specificity and wins by source order. */
 
 * { box-sizing: border-box; }
+
+/* visually hidden but readable by screen readers (e.g. the home-page h1) */
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0; border: 0;
+  clip: rect(0 0 0 0); clip-path: inset(50%);
+  overflow: hidden; white-space: nowrap;
+}
 
 html { -webkit-text-size-adjust: 100%; }
 

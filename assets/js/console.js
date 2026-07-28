@@ -257,7 +257,7 @@
 
       // ↑/↓ walk previous commands (shell-style). Down past the newest clears the line.
       input.addEventListener("keydown", function (e) {
-        if (e.key !== "ArrowUp" && e.key !== "ArrowDown" || !cmdHistory.length) return;
+        if ((e.key !== "ArrowUp" && e.key !== "ArrowDown") || !cmdHistory.length) return;
         e.preventDefault();
         if (e.key === "ArrowUp") { if (histIdx > 0) histIdx--; }
         else if (histIdx < cmdHistory.length) histIdx++;
