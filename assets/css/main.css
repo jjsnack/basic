@@ -433,7 +433,7 @@ main { padding-bottom: 6rem; }
 
 /* figures (markdown images) */
 .post-figure { margin: 2rem 0; }
-.post-figure img { display: block; width: 100%; border: 1px solid var(--border); border-radius: 4px; }
+.post-figure img { display: block; width: 100%; border-radius: 4px; }
 .post-figure figcaption {
   margin-top: 0.5rem;
   font-family: var(--mono);
@@ -441,6 +441,21 @@ main { padding-bottom: 6rem; }
   color: var(--muted);
   text-align: center;
 }
+.post-figure__zoom { display: block; cursor: zoom-in; }
+
+/* click-to-zoom lightbox: pure CSS via :target, no JS */
+.lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  padding: 2rem;
+  align-items: center;
+  justify-content: center;
+}
+.lightbox:target { display: flex; }
+.lightbox__backdrop { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.85); cursor: zoom-out; }
+.lightbox img { position: relative; max-width: 100%; max-height: 100%; border-radius: 4px; }
 
 /* code shortcode: imported file/URL, source path shown above the block */
 .code-import figcaption { margin-bottom: 0.4rem; font-family: var(--mono); font-size: 0.75rem; color: var(--muted); }
