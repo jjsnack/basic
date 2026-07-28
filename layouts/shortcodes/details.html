@@ -1,0 +1,7 @@
+{{- /* {{< details summary="Click to expand" >}}markdown content{{< /details >}}
+   Wraps the native <details>/<summary> disclosure widget — no JS. */ -}}
+{{- $summary := .Get "summary" | default "Details" -}}
+<details class="details">
+  <summary>{{ $summary }}</summary>
+  <div class="details__body">{{ .Inner | $.Page.RenderString }}</div>
+</details>

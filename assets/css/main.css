@@ -467,6 +467,54 @@ main { padding-bottom: 6rem; }
 .swatches__chip { display: block; width: 3rem; height: 3rem; border-radius: 6px; border: 1px solid var(--border); }
 .swatches__label { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); }
 
+/* admonition shortcode */
+.admonition {
+  margin: 1.5rem 0;
+  padding: 0.9rem 1.1rem;
+  border-left: 3px solid var(--admonition-color, var(--c-blue));
+  background: color-mix(in srgb, var(--admonition-color, var(--c-blue)) 10%, transparent);
+  border-radius: 4px;
+}
+.admonition--tip { --admonition-color: var(--c-green); }
+.admonition--warning { --admonition-color: var(--c-orange); }
+.admonition--danger { --admonition-color: var(--c-red); }
+.admonition__title { margin: 0 0 0.4rem; font-weight: 600; color: var(--admonition-color, var(--c-blue)); }
+.admonition__body > :first-child { margin-top: 0; }
+.admonition__body > :last-child { margin-bottom: 0; }
+
+/* details shortcode — native <details>/<summary>, themed */
+.details { margin: 1.5rem 0; border: 1px solid var(--border); border-radius: 6px; padding: 0.75rem 1rem; }
+.details summary { cursor: pointer; font-weight: 600; }
+.details[open] summary { margin-bottom: 0.5rem; }
+.details__body > :first-child { margin-top: 0; }
+.details__body > :last-child { margin-bottom: 0; }
+
+/* badge shortcode */
+.badge {
+  display: inline-block;
+  padding: 0.15em 0.55em;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+.badge--red { border-color: var(--c-red); color: var(--c-red); }
+.badge--orange { border-color: var(--c-orange); color: var(--c-orange); }
+.badge--yellow { border-color: var(--c-yellow); color: var(--c-yellow); }
+.badge--green { border-color: var(--c-green); color: var(--c-green); }
+.badge--cyan { border-color: var(--c-cyan); color: var(--c-cyan); }
+.badge--blue { border-color: var(--c-blue); color: var(--c-blue); }
+.badge--purple { border-color: var(--c-purple); color: var(--c-purple); }
+.badge--pink { border-color: var(--c-pink); color: var(--c-pink); }
+
+/* footnotes (goldmark markup, no shortcode needed) */
+.footnote-ref { text-decoration: none; }
+.footnotes { margin-top: 2.5rem; padding-top: 1rem; border-top: 1px solid var(--border); font-size: 0.9rem; color: var(--muted); }
+.footnotes hr { display: none; }
+.footnotes ol { padding-left: 1.25rem; }
+.footnote-backref { text-decoration: none; margin-left: 0.3rem; }
+
 /* math (MathML) */
 .post__body math { font-size: 1.05em; }
 .post__body math[display="block"] {

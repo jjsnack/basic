@@ -65,3 +65,47 @@ That's it.
 ## A video
 
 {{< youtube dQw4w9WgXcQ >}}
+
+## Contact
+
+Questions? {{< mailto "hello@example.org" "Hello from the blog" "say hi" >}}.
+
+Default text: {{< mailto "hello@example.org" >}}
+
+## Admonitions
+
+{{< admonition >}}A plain note, no title override.{{< /admonition >}}
+
+{{< admonition type="tip" title="Pro tip" >}}Use `pnpm dev` for live reload while writing.{{< /admonition >}}
+
+{{< admonition type="warning" title="Careful" >}}This regenerates the fingerprinted bundle.{{< /admonition >}}
+
+{{< admonition type="danger" title="Don't" >}}Never commit `.env` files.{{< /admonition >}}
+
+## Details
+
+{{< details summary="Click to expand" >}}
+Hidden content with **markdown** support, revealed via the native `<details>` element.
+{{< /details >}}
+
+## Badges
+
+{{< badge "MIT" >}} {{< badge "v1.2.0" "blue" >}} {{< badge "beta" "orange" >}}
+
+## Package cards
+
+{{< npm "left-pad" >}}
+
+{{< crates "serde" >}}
+
+{{< pypi "requests" >}}
+
+## A Bluesky post
+
+{{< bluesky "https://bsky.app/profile/bsky.app/post/3mqcp5qjdfs26" >}}
+
+## A footnote
+
+Here's a claim that needs backing up.[^1]
+
+[^1]: This is the footnote content, rendered by goldmark natively.

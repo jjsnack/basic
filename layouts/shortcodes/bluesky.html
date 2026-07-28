@@ -1,0 +1,47 @@
+{{- /* {{< bluesky "https://bsky.app/profile/handle.bsky.social/post/postid" >}}
+   Fetches the post via Bluesky's public AppView API at build time and renders
+   it as a card — no embed script, no auth needed (unlike X/Twitter, which
+   removed unauthenticated read access, so there's no equivalent shortcode for
+   it without a developer API key). */ -}}
+{{- $url := .Get 0 -}}
+{{- if not $url }}{{ errorf "bluesky shortcode: post URL required, e.g. {{</* bluesky \"https://bsky.app/profile/handle/post/id\" */>}} (%s)" .Position }}{{ end -}}
+{{- $parts := strings.Split $url "/" -}}
+{{- if lt (len $parts) 7 }}{{ errorf "bluesky shortcode: expected https://bsky.app/profile/<handle>/post/<id> (%s)" .Position }}{{ end -}}
+{{- $handle := index $parts 4 -}}
+{{- $postID := index $parts 6 -}}
+
+{{- $atURI := printf "at://%s/app.bsky.feed.post/%s" $handle $postID -}}
+{{- $encoded := replace $atURI ":" "%3A" -}}
+{{- $encoded = replace $encoded "/" "%2F" -}}
+
+{{- $author := $handle -}}
+{{- $text := "" -}}
+{{- $likes := "" -}}
+{{- $reposts := "" -}}
+{{- $try := try (resources.GetRemote (printf "https://public.api.bsky.app/xrpc/app.bsky.feed.getPostThread?uri=%s" $encoded)) -}}
+{{- with $try -}}
+  {{- if .Err }}{{ errorf "bluesky shortcode: failed to fetch %s: %s (%s)" $url .Err $.Position }}
+  {{- else -}}
+    {{- with .Value -}}
+      {{- $post := (transform.Unmarshal .Content).thread.post -}}
+      {{- $text = $post.record.text -}}
+      {{- $likes = int $post.likeCount -}}
+      {{- $reposts = int $post.repostCount -}}
+      {{- if $post.author.displayName }}{{ $author = printf "%s (@%s)" $post.author.displayName $post.author.handle }}{{ else }}{{ $author = $post.author.handle }}{{ end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+<a class="repo-card" href="{{ $url }}" target="_blank" rel="noopener noreferrer">
+  <span class="repo-card__icon" aria-hidden="true">🦋</span>
+  <span class="repo-card__main">
+    <span class="repo-card__name">{{ $author }}</span>
+    {{- with $text }}<span class="repo-card__desc">{{ . }}</span>{{ end }}
+  </span>
+  {{- if or $likes $reposts }}
+  <span class="repo-card__meta">
+    {{- with $reposts }}<span class="repo-card__stat">⟲ {{ . }}</span>{{ end }}
+    {{- with $likes }}<span class="repo-card__stat">♥ {{ . }}</span>{{ end }}
+  </span>
+  {{- end }}
+</a>
