@@ -150,6 +150,63 @@ main { padding-bottom: 6rem; }
 .page-head h1 { margin: 0 0 0.5rem; font-size: 1.6rem; letter-spacing: -0.01em; }
 .page-intro { color: var(--muted); max-width: 46ch; }
 
+/* ---- landing (home) ---- */
+/* the front door: a greeting, a featured latest post, then a short recent list.
+   The full archive lives at /posts/, so this page reads differently on purpose. */
+.intro {
+  max-width: 30ch;
+  margin: 0.5rem 0 3.5rem;
+  font-size: clamp(1.5rem, 5vw, 2.1rem);
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+}
+
+.eyebrow {
+  margin: 0 0 1rem;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.lead { margin-bottom: 3.5rem; }
+.lead__title {
+  margin: 0;
+  font-size: clamp(1.8rem, 4.5vw, 2.5rem);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  font-weight: 500;
+}
+.lead__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.9rem;
+  margin: 0.75rem 0 0;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.lead__topics a:not(:hover) { color: var(--muted); }
+.lead__summary { max-width: var(--measure); margin: 1.1rem 0 0; color: var(--fg); }
+.lead__more {
+  display: inline-block;
+  margin-top: 1.1rem;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--link);
+}
+
+.recent { margin-bottom: 2.5rem; }
+
+.all-link {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.all-link:hover { color: var(--link); }
+
 /* ---- console (floating terminal) ---- */
 .console-launch {
   position: fixed;

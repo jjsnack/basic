@@ -1,15 +1,34 @@
 {{ define "main" }}
-  {{/* No h1 — the site title in the header already carries it. Keep the intro only. */}}
+  {{/* Landing = a front door, not the archive: a greeting, the latest post given
+       real weight, a few recents, topics, then a link to the full list at /posts/. */}}
+  {{ $posts := where site.RegularPages "Type" "posts" }}
   {{ $intro := or .Content site.Params.description }}
-  {{ with $intro }}<header class="page-head"><div class="page-intro">{{ . }}</div></header>{{ end }}
+
+  {{ with $intro }}<div class="intro">{{ . }}</div>{{ end }}
+
+  {{ with index $posts 0 }}
+    <section class="lead" aria-labelledby="lead-label">
+      <p class="eyebrow" id="lead-label">latest</p>
+      <a class="lead__link" href="{{ .RelPermalink }}"><h2 class="lead__title">{{ .Title }}</h2></a>
+      <p class="lead__meta">
+        <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "Jan 2, 2006" }}</time>
+        {{ with .GetTerms "topics" }}<span class="lead__topics">{{ range . }}<a href="{{ .RelPermalink }}">#{{ .LinkTitle }}</a> {{ end }}</span>{{ end }}
+      </p>
+      {{ with .Summary }}<p class="lead__summary">{{ . | plainify | truncate 220 }}</p>{{ end }}
+      <a class="lead__more" href="{{ .RelPermalink }}">read →</a>
+    </section>
+  {{ end }}
+
+  {{ with first 4 (after 1 $posts) }}
+    <section class="recent" aria-labelledby="recent-label">
+      <p class="eyebrow" id="recent-label">more writing</p>
+      {{ partial "post-list.html" . }}
+    </section>
+  {{ end }}
+
   {{ partial "topics.html" . }}
-  {{ $paginator := .Paginate (where site.RegularPages "Type" "posts") }}
-  {{ partial "post-list.html" $paginator.Pages }}
-  {{ if gt $paginator.TotalPages 1 }}
-    <nav class="pager" aria-label="Post pages">
-      {{ if $paginator.HasPrev }}<a class="pager__link" href="{{ $paginator.Prev.URL }}">← newer</a>{{ else }}<span class="pager__link pager__link--off">← newer</span>{{ end }}
-      <span class="pager__count">{{ $paginator.PageNumber }} / {{ $paginator.TotalPages }}</span>
-      {{ if $paginator.HasNext }}<a class="pager__link" href="{{ $paginator.Next.URL }}">older →</a>{{ else }}<span class="pager__link pager__link--off">older →</span>{{ end }}
-    </nav>
+
+  {{ with site.GetPage "/posts" }}
+    {{ if gt (len $posts) 5 }}<a class="all-link" href="{{ .RelPermalink }}">all posts →</a>{{ end }}
   {{ end }}
 {{ end }}

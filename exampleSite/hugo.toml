@@ -8,7 +8,7 @@ themesDir = "../.."
   pagerSize = 12
 
 [params]
-  description = "A minimal black-and-white theme for text-first blogs."
+  description = "A minimal theme for text-first blogs."
   footerNote = "Built with the basic theme."
 
 [[menu.main]]
