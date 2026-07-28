@@ -306,6 +306,20 @@ main {
 .post-list__date { font-family: var(--mono); font-size: 0.8rem; color: var(--muted); white-space: nowrap; }
 .post-list__link:hover .post-list__date { color: var(--row-fg); }
 
+/* ---- pager (paginated post list) ---- */
+.pager {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 2rem;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+}
+.pager__link:hover { color: var(--link); }
+.pager__link--off { color: var(--border); }
+.pager__count { color: var(--muted); }
+
 /* ---- single post ---- */
 .post__head { margin-bottom: 2.5rem; }
 .post__title { margin: 0 0 0.5rem; font-size: 2rem; line-height: 1.2; letter-spacing: -0.02em; }

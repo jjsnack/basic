@@ -4,6 +4,9 @@ title = "basic"
 theme = "basic"
 themesDir = "../.."
 
+[pagination]
+  pagerSize = 12
+
 [params]
   description = "A minimal black-and-white theme for text-first blogs."
   footerNote = "Built with the basic theme."
