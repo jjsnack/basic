@@ -2,7 +2,9 @@
 
 A minimal, black-and-white Hugo theme for text-first blogs. Pure monochrome
 until you hover something clickable — then a single accent colour pops. Ships
-with light / dark / auto modes (no flash on load, remembers your choice).
+with light / dark / auto modes plus a few colour themes (no flash on load,
+remembers your choice), a set of shortcodes for embedding code and repo/package
+cards, and a floating console to drive it all.
 
 **Live demo:** https://jjsnack.github.io/basic/ (the `exampleSite/`, built and
 deployed on every push).
@@ -66,8 +68,9 @@ declared in site config:
 
 ## Images
 
-Standard markdown images render as captioned `<figure>`s (alt text becomes the
-caption), lazy-loaded:
+Standard markdown images render as captioned, borderless `<figure>`s (alt text
+becomes the caption), lazy-loaded. Click one to zoom via a pure-CSS lightbox
+(no JS):
 
 ```markdown
 ![This caption shows under the image.](/img/photo.jpg)
@@ -101,18 +104,49 @@ load:
       A --> B
     ```
 
-## Theme modes
+## Shortcodes
 
-Header button cycles **auto → light → dark** (`◐ ○ ●`). Auto follows the OS;
-an explicit pick is saved to `localStorage`.
+| Shortcode | What it does |
+|---|---|
+| `github`, `gitlab`, `huggingface`, `npm`, `crates`, `pypi` | Repo/package cards. Fetch live description/stats from the relevant API at build time, fall back to a bare link card if the fetch fails. Override with `desc=`/etc. to skip the network call. |
+| `code` | Imports a local file or remote URL instead of pasting code inline, so it can't drift out of sync. `lines="12-34"` for a range, `lang=` to override the guessed language. |
+| `gist` | Renders a GitHub gist with the theme's own syntax highlighting (Hugo's built-in `gist` shortcode was removed in v0.156). |
+| `bluesky` | Renders a Bluesky post via its public API. No `tweet` equivalent — X/Twitter dropped unauthenticated read access. |
+| `youtube` | Hugo's built-in shortcode; the theme just themes its corners. |
+| `swatches` | A row of labelled colour chips. |
+| `admonition` | A themed callout: `type="note\|tip\|warning\|danger"`. |
+| `details` | Wraps native `<details>`/`<summary>` — no JS. |
+| `badge` | An inline pill, optionally coloured from the pop palette. |
+| `mailto` | An obfuscated mail link. Base64 + a few lines of inline JS assemble the real `mailto:` on load — the one shortcode here that needs JS, since HTML-entity encoding doesn't survive Hugo's `--minify` pass. |
 
-## Change the accent colour
+Full syntax and live examples for each: `exampleSite/content/posts/shortcodes.md`.
+
+## The console
+
+A floating terminal (bottom-right launcher, `$`), progressively enhanced —
+the page works fully with JS off. Type `help` inside it for the full command
+list; the two with real content:
+
+- `theme set <name>` — switch theme. Modes: `light`, `dark`, `auto`, plus any
+  colour theme file under `assets/css/themes/*.css` (ships with `paper`,
+  `dracula`, `valentine`). Persisted to `localStorage`, no flash on reload.
+- `music play` / `music stop` / `music volume <0-10>` — an 8-bit soundtrack
+  synthesised live with WebAudio (no audio files), one tune per theme,
+  keeps playing across page navigation.
+
+### Change the accent colour
 
 One line in `assets/css/main.css`:
 
 ```css
 --accent: #ff2d55;
 ```
+
+### Add a colour theme
+
+Drop a new `assets/css/themes/<name>.css` with a `:root[data-theme="<name>"]`
+block (see the existing ones for the variable list), then add `<name>` to the
+`modes` array in `assets/js/console.js`'s `theme` command.
 
 ## Demo deployment
 
@@ -123,4 +157,5 @@ The workflow injects the correct `baseURL` for project pages automatically.
 
 ## Requirements
 
-Hugo extended ≥ 0.116 (uses the asset pipeline for CSS).
+Hugo extended ≥ 0.141 (asset pipeline for CSS; the repo/package card
+shortcodes use the `try` keyword, added in that release).
