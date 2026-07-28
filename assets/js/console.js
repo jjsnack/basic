@@ -143,6 +143,7 @@
       var expandBtn = root.querySelector(".console__expand");
       var closeBtn = root.querySelector(".console__close");
       var cmdHistory = []; // local — do not shadow window.history
+      var histIdx = 0;     // cursor for ↑/↓ recall; == length means "current line"
 
       var write = function (line, kind) {
         var el = document.createElement("div");
@@ -249,8 +250,20 @@
         if (res.music === "off") { chiptune.off(); write({ text: "music off" }); }
         if (res.volume != null) chiptune.setVolume(res.volume);
         input.value = "";
+        histIdx = cmdHistory.length; // reset recall to the (empty) current line
         log.scrollTop = log.scrollHeight;
         if (res.close) close();
+      });
+
+      // ↑/↓ walk previous commands (shell-style). Down past the newest clears the line.
+      input.addEventListener("keydown", function (e) {
+        if (e.key !== "ArrowUp" && e.key !== "ArrowDown" || !cmdHistory.length) return;
+        e.preventDefault();
+        if (e.key === "ArrowUp") { if (histIdx > 0) histIdx--; }
+        else if (histIdx < cmdHistory.length) histIdx++;
+        input.value = histIdx >= cmdHistory.length ? "" : cmdHistory[histIdx];
+        var end = input.value.length;
+        input.setSelectionRange(end, end);
       });
 
       root.querySelector(".console__screen").addEventListener("click", function () { input.focus(); });
