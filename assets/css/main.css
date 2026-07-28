@@ -412,6 +412,25 @@ main { padding-bottom: 6rem; }
 .post__body h3 { margin-top: 2rem; font-size: 1.1rem; }
 .post__body img { max-width: 100%; height: auto; }
 
+/* ---- repo-card shortcodes: github, gitlab, huggingface ---- */
+.post__body .repo-card { text-decoration: none; }
+.repo-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--fg);
+}
+.repo-card:hover { border-color: var(--link); }
+.repo-card:hover .repo-card__name { color: var(--link); }
+.repo-card__icon { flex: none; margin-top: 0.15rem; color: var(--muted); font-size: 1.1rem; line-height: 1; }
+.repo-card__main { display: flex; flex-direction: column; gap: 0.2rem; min-width: 0; }
+.repo-card__name { font-family: var(--mono); font-weight: 600; }
+.repo-card__desc { color: var(--muted); font-size: 0.9rem; }
+.repo-card__meta { margin-left: auto; flex: none; display: flex; gap: 0.75rem; font-family: var(--mono); font-size: 0.8rem; color: var(--muted); white-space: nowrap; }
+
 /* figures (markdown images) */
 .post-figure { margin: 2rem 0; }
 .post-figure img { display: block; width: 100%; border: 1px solid var(--border); border-radius: 4px; }
@@ -422,6 +441,16 @@ main { padding-bottom: 6rem; }
   color: var(--muted);
   text-align: center;
 }
+
+/* code shortcode: imported file/URL, source path shown above the block */
+.code-import figcaption { margin-bottom: 0.4rem; font-family: var(--mono); font-size: 0.75rem; color: var(--muted); }
+.code-import figcaption a:hover { color: var(--link); }
+
+/* swatches shortcode */
+.swatches { display: flex; flex-wrap: wrap; gap: 1rem; margin: 1.5rem 0; }
+.swatches__item { display: flex; flex-direction: column; align-items: center; gap: 0.4rem; }
+.swatches__chip { display: block; width: 3rem; height: 3rem; border-radius: 6px; border: 1px solid var(--border); }
+.swatches__label { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); }
 
 /* math (MathML) */
 .post__body math { font-size: 1.05em; }
@@ -476,6 +505,7 @@ main { padding-bottom: 6rem; }
   font-family: var(--mono);
   font-size: 0.85rem;
 }
+.post__body iframe { border-radius: 6px; }
 .post__body code { font-family: var(--mono); font-size: 0.9em; }
 .post__body :not(pre) > code {
   padding: 0.1em 0.35em;

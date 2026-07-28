@@ -18,6 +18,18 @@ pop of colour. Inline `code` looks like this.
 
 > A blockquote sits quietly to one side.
 
+## A repo
+
+{{< github "gohugoio/hugo" >}}
+
+{{< gitlab "gitlab-org/gitlab" >}}
+
+{{< huggingface "bert-base-uncased" >}}
+
+## Swatches
+
+{{< swatches "#64748b" "#3b82f6" "#06b6d4" >}}
+
 ## A diagram
 
 ```mermaid
@@ -41,3 +53,15 @@ Inline, like $E = mc^2$, sits in the sentence. Display math gets its own line:
 $$\int_{-\infty}^{\infty} e^{-x^2}\,dx = \sqrt{\pi}$$
 
 That's it.
+
+## Imported code
+
+{{< code file="assets/js/console.js" lines="1-8" >}}
+
+## A gist
+
+{{< gist "octocat" "6cad326836d38bd3a7ae" >}}
+
+## A video
+
+{{< youtube dQw4w9WgXcQ >}}

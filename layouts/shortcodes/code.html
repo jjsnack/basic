@@ -1,0 +1,40 @@
+{{- /* {{< code file="assets/js/console.js" >}} or {{< code url="https://raw.githubusercontent.com/…" >}}
+   Imports code from a local file or remote URL instead of pasting it inline.
+   Optional: lang="go" (else guessed from the extension), lines="12-34" (1-indexed, inclusive). */ -}}
+{{- $file := .Get "file" -}}
+{{- $url := .Get "url" -}}
+{{- if not (or $file $url) }}{{ errorf "code shortcode: file or url required, e.g. {{</* code file=\"path/to/file.go\" */>}} (%s)" .Position }}{{ end -}}
+{{- if and $file $url }}{{ errorf "code shortcode: pass file or url, not both (%s)" .Position }}{{ end -}}
+
+{{- $lang := .Get "lang" -}}
+{{- $label := "" -}}
+{{- $content := "" -}}
+{{- if $file -}}
+  {{- $content = os.ReadFile $file -}}
+  {{- $label = $file -}}
+  {{- if not $lang }}{{ $lang = path.Ext $file | strings.TrimPrefix "." }}{{ end -}}
+{{- else -}}
+  {{- $label = $url -}}
+  {{- $try := try (resources.GetRemote $url) -}}
+  {{- with $try -}}
+    {{- if .Err }}{{ errorf "code shortcode: failed to fetch %s: %s (%s)" $url .Err $.Position }}
+    {{- else -}}
+      {{- $content = .Value.Content -}}
+      {{- if not $lang }}{{ $lang = path.Ext $url | strings.TrimPrefix "." }}{{ end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- with .Get "lines" -}}
+  {{- $parts := strings.Split . "-" -}}
+  {{- $start := int (index $parts 0) -}}
+  {{- $end := $start -}}
+  {{- if gt (len $parts) 1 }}{{ $end = int (index $parts 1) }}{{ end -}}
+  {{- $all := strings.Split $content "\n" -}}
+  {{- $content = delimit (after (sub $start 1) (first $end $all)) "\n" -}}
+{{- end -}}
+
+<figure class="code-import">
+  <figcaption>{{ if $url }}<a href="{{ $url }}" target="_blank" rel="noopener noreferrer">{{ $label }}</a>{{ else }}{{ $label }}{{ end }}</figcaption>
+  {{ transform.Highlight $content $lang }}
+</figure>
