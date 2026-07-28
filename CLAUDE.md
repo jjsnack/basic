@@ -1,8 +1,10 @@
 # basic
 
 Minimal black-and-white Hugo theme for text-first blogs. Light/dark/auto, no JS
-dependencies. The theme itself lives at repo root; `exampleSite/` is the demo
-site used for local dev.
+required to read a post — the one exception is the `mailto` shortcode, which
+needs a few inline lines to assemble the obfuscated address (see Shortcodes
+below). The theme itself lives at repo root; `exampleSite/` is the demo site
+used for local dev.
 
 ## Commands
 
@@ -10,12 +12,14 @@ site used for local dev.
 - `pnpm build` — minified production build of `exampleSite/`
 - `node assets/js/console.js` — run the console self-check (asserts at bottom of file)
 
-Hugo min version 0.116.0. Assets go through Hugo Pipes (Minify + Fingerprint),
-see `layouts/partials/console.html`.
+Hugo min version 0.141.0 (the repo/package card shortcodes use the `try`
+keyword, added in that release). Assets go through Hugo Pipes (Minify +
+Fingerprint), see `layouts/partials/console.html`.
 
 ## Layout
 
-- `layouts/` — templates (`_default/`, `partials/`). `baseof.html` is the shell.
+- `layouts/` — templates (`_default/`, `partials/`, `shortcodes/`). `baseof.html`
+  is the shell.
 - `assets/css/main.css` — the core stylesheet (base light/dark, layout, sets).
   Colour themes live in `assets/css/themes/*.css`, concatenated in `baseof.html`.
 - `assets/js/console.js` — the floating terminal (below).
@@ -53,6 +57,35 @@ Subcommands:
 - Add every new command to the `help` list (aligned `name : description`).
 - Add an `assert` to the self-check block for each new branch, then run
   `node assets/js/console.js`.
+
+## Shortcodes
+
+Live in `layouts/shortcodes/`, one file per shortcode. Full syntax + rendered
+examples for every one of them: `exampleSite/content/posts/shortcodes.md` —
+update that post whenever a shortcode is added, renamed, or reparamaterized.
+
+- **Positional vs named params**: Hugo shortcode calls cannot mix positional
+  and named params in the same call. Every shortcode here accepts positional
+  args (`.Get 0`, `.Get 1`, ...) with named overrides (`with .Get "name"`) so
+  either calling style works alone — but a call can't use both at once. Bit
+  us twice already (`mailto`, `badge`); if a new shortcode's demo call errors
+  with "Cannot mix named and positional parameters", this is why.
+- **Repo/package cards** (`github`, `gitlab`, `huggingface`, `npm`, `crates`,
+  `pypi`) all render the shared `.repo-card` component — same markup shape
+  (icon, name, description, meta stats), so a new registry card should reuse
+  those classes rather than inventing new ones.
+- **Build-time API fetch pattern**: `try (resources.GetRemote url)`, then
+  `with .Value` / `if .Err`. Hugo removed `resource.Err` in v0.141.0 in favour
+  of the `try` keyword — don't reach for the old pattern.
+- **Fail soft vs fail loud**: the repo/package cards degrade to a bare link
+  card if the API call fails (the link still works without the decoration).
+  `gist`, `bluesky`, and `code` hard-error via `errorf` instead — for those,
+  the fetched content *is* the entire point of the shortcode, so a silent
+  empty render would be actively misleading.
+- **`mailto`** is the one shortcode that ships JS: HTML entity-encoding the
+  address doesn't survive Hugo's `--minify` pass (it decodes entities back to
+  plaintext), so the real link is base64'd into data attributes and assembled
+  by inline JS on load instead.
 
 ## Themes
 
