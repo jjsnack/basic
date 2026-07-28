@@ -159,6 +159,7 @@ main { padding-bottom: 6rem; }
   font-size: clamp(1.5rem, 5vw, 2.1rem);
   line-height: 1.25;
   letter-spacing: -0.015em;
+  color: var(--accent);
 }
 
 .eyebrow {
