@@ -25,7 +25,7 @@
 :root {
   --bg: #ffffff;
   --fg: #111111;
-  --muted: #8a8a8a;
+  --muted: #767676; /* ~4.54:1 on #fff — clears WCAG AA for small text */
   --border: #e6e6e6;
   --accent: #b5451e; /* the pop of colour — change this one line to re-tint */
   --accent-fg: #ffffff; /* text/glyph colour on an accent fill */
@@ -60,11 +60,6 @@
     --fg: #ededed;
     --muted: #7d7d7d;
     --border: #262626;
-  }
-}
-/* dark base shares its pops with the media-query block above */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
     --selection: #33261f;
     --c-red: #ff6b6b; --c-orange: #ffb86c; --c-yellow: #f1fa8c; --c-green: #50fa7b;
     --c-cyan: #8be9fd; --c-blue: #7aa2f7; --c-purple: #bd93f9; --c-pink: #ff79c6;
@@ -87,6 +82,16 @@
    block matches the dark media query's specificity and wins by source order. */
 
 * { box-sizing: border-box; }
+
+/* honour reduced-motion: kill transitions/animations for those who ask */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
 
 /* visually hidden but readable by screen readers (e.g. the home-page h1) */
 .visually-hidden {
