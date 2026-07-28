@@ -194,7 +194,7 @@
             playing = true; step = 0;
             return Promise.resolve(ctx.resume()).then(function () {
               nextTime = ctx.currentTime + 0.05;
-              tick(); timer = setInterval(tick, 25);
+              clearInterval(timer); tick(); timer = setInterval(tick, 25);
             }, function (err) { playing = false; throw err; });
           },
           off: function () { playing = false; clearInterval(timer); },
@@ -203,7 +203,8 @@
       })();
 
       // Restore music across page navigations. Autoplay policy blocks a fresh
-      // load with no user gesture, so if immediate resume is refused we start on
+      // load with no user gesture, so we never call on() here (a gesture-less
+      // resume() stays pending and would wedge `playing`); instead we resume on
       // the first interaction. ponytail: relies on stored pref, not tab session.
       (function () {
         var v = localStorage.getItem("musicVolume");
@@ -215,10 +216,8 @@
           document.removeEventListener("keydown", arm);
           chiptune.on().then(function () {}, function () {});
         };
-        chiptune.on().then(function () {}, function () {
-          document.addEventListener("pointerdown", arm);
-          document.addEventListener("keydown", arm);
-        });
+        document.addEventListener("pointerdown", arm);
+        document.addEventListener("keydown", arm);
       })();
 
       var applyTheme = function (mode) {
