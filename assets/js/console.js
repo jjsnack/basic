@@ -152,14 +152,12 @@
         log.appendChild(el);
       };
 
-      // ---- 8-bit soundtrack: calm C-major pentatonic, WebAudio, no assets ----
-      // 32 eighth-notes. midi note, 0 = rest. Sparse melody that rings.
+      // ---- 8-bit soundtrack: WebAudio, no assets. Tunes live in tunes.js ----
+      // (window.TUNES), keyed by theme; the engine just plays the active one.
+      var TUNES = (typeof window !== "undefined" && window.TUNES) || {};
       var chiptune = (function () {
-        var lead = [72, 0, 76, 0, 79, 0, 76, 0, 74, 0, 77, 0, 81, 0, 79, 0,
-                    72, 0, 76, 0, 84, 0, 79, 0, 81, 0, 79, 0, 76, 0, 74, 0];
-        var bass = [48, 0, 0, 0, 0, 0, 0, 0, 45, 0, 0, 0, 0, 0, 0, 0,
-                    41, 0, 0, 0, 0, 0, 0, 0, 43, 0, 0, 0, 0, 0, 0, 0];
-        var spn = 60 / 84 / 2; // seconds per eighth-note at a gentle 84bpm
+        var tune = TUNES.default || { bpm: 84, wave: "triangle", lead: [0], bass: [0] };
+        var spn = 60 / tune.bpm / 2; // seconds per eighth-note
         var ctx, master, timer, nextTime, step, playing = false, vol = 0.5;
         var freq = function (m) { return 440 * Math.pow(2, (m - 69) / 12); };
         var voice = function (m, t, dur, type, peak) { // peak: per-note gain (distinct from master vol)
@@ -173,13 +171,19 @@
         };
         var tick = function () {
           while (nextTime < ctx.currentTime + 0.12) {
-            voice(lead[step], nextTime, spn * 2.2, "triangle", 0.14); // let it ring
-            voice(bass[step], nextTime, spn * 7, "sine", 0.12);       // slow pad
-            step = (step + 1) % lead.length;
+            voice(tune.lead[step], nextTime, spn * 2.2, tune.wave || "triangle", 0.14); // let it ring
+            voice(tune.bass[step], nextTime, spn * 7, "sine", 0.12);                    // slow pad
+            step = (step + 1) % tune.lead.length;
             nextTime += spn;
           }
         };
         return {
+          // Swap the soundtrack to match a theme (light/dark/auto → default).
+          setTune: function (name) {
+            var t = TUNES[name] || TUNES.default;
+            if (!t || t === tune) return;
+            tune = t; spn = 60 / tune.bpm / 2; step = 0;
+          },
           // Resolves once audio is actually running; rejects if the browser blocks it.
           on: function () {
             if (playing) return Promise.resolve();
@@ -190,7 +194,7 @@
             playing = true; step = 0;
             return Promise.resolve(ctx.resume()).then(function () {
               nextTime = ctx.currentTime + 0.05;
-              tick(); timer = setInterval(tick, 25);
+              clearInterval(timer); tick(); timer = setInterval(tick, 25);
             }, function (err) { playing = false; throw err; });
           },
           off: function () { playing = false; clearInterval(timer); },
@@ -198,9 +202,28 @@
         };
       })();
 
+      // Restore music across page navigations. Autoplay policy blocks a fresh
+      // load with no user gesture, so we never call on() here (a gesture-less
+      // resume() stays pending and would wedge `playing`); instead we resume on
+      // the first interaction. ponytail: relies on stored pref, not tab session.
+      (function () {
+        var v = localStorage.getItem("musicVolume");
+        if (v != null) chiptune.setVolume(+v);
+        if (localStorage.getItem("music") !== "on") return;
+        chiptune.setTune(document.documentElement.dataset.theme);
+        var arm = function () {
+          document.removeEventListener("pointerdown", arm);
+          document.removeEventListener("keydown", arm);
+          chiptune.on().then(function () {}, function () {});
+        };
+        document.addEventListener("pointerdown", arm);
+        document.addEventListener("keydown", arm);
+      })();
+
       var applyTheme = function (mode) {
         if (mode === "auto") { localStorage.removeItem("theme"); delete document.documentElement.dataset.theme; }
         else { localStorage.setItem("theme", mode); document.documentElement.dataset.theme = mode; }
+        chiptune.setTune(mode); // swap soundtrack live if music is playing
       };
 
       var open = function () {
@@ -209,7 +232,7 @@
         input.focus();
       };
       var close = function () {
-        chiptune.off();
+        // Music keeps playing when closed — stop it with `music stop`.
         root.hidden = true;
         root.classList.remove("console--docked");
         root.style.left = root.style.top = root.style.right = root.style.bottom = "";
@@ -242,13 +265,15 @@
         res.lines.forEach(function (l) { write(l); });
         if (res.theme) applyTheme(res.theme);
         if (res.music === "on") {
+          localStorage.setItem("music", "on");
+          chiptune.setTune(document.documentElement.dataset.theme);
           chiptune.on().then(
             function () { write({ text: "♪ music on" }); log.scrollTop = log.scrollHeight; },
             function () { write({ text: "music blocked by the browser — interact with the page and retry." }); log.scrollTop = log.scrollHeight; }
           );
         }
-        if (res.music === "off") { chiptune.off(); write({ text: "music off" }); }
-        if (res.volume != null) chiptune.setVolume(res.volume);
+        if (res.music === "off") { localStorage.removeItem("music"); chiptune.off(); write({ text: "music off" }); }
+        if (res.volume != null) { localStorage.setItem("musicVolume", res.volume); chiptune.setVolume(res.volume); }
         input.value = "";
         histIdx = cmdHistory.length; // reset recall to the (empty) current line
         log.scrollTop = log.scrollHeight;
