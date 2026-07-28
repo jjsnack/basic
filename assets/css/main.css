@@ -255,10 +255,10 @@ main { padding-bottom: 6rem; }
   box-shadow: 0 10px 34px rgba(0, 0, 0, 0.2);
   overflow: hidden;
   font-family: var(--mono);
-  font-size: 0.82rem;
+  font-size: 0.738rem; /* 10% smaller; ch-based width tracks it, keeping 80 cols */
   display: flex;
   flex-direction: column;
-  height: min(90vh, 36rem);
+  height: min(90vh, 32.4rem);
 }
 /* the display:flex above beats the UA [hidden] rule, so hide explicitly */
 .console[hidden] { display: none; }
