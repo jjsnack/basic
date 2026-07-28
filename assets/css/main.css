@@ -112,8 +112,7 @@ a:focus-visible { color: var(--link); }
 
 /* ---- layout ---- */
 .site-header,
-main,
-.site-footer {
+main {
   max-width: var(--measure);
   margin-inline: auto;
   padding-inline: var(--pad);
@@ -423,14 +422,15 @@ main,
 }
 .post-nav__next { margin-left: auto; text-align: right; }
 
-/* ---- footer ---- */
+/* ---- footer: fixed to the bottom-left corner, no divider bar ---- */
 .site-footer {
+  position: fixed;
+  left: 1rem;
+  bottom: 1rem;
+  z-index: 30;
   display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-top: 5rem;
-  padding-block: 2rem;
-  border-top: 1px solid var(--border);
+  flex-direction: column;
+  gap: 0.2rem;
   font-family: var(--mono);
   font-size: 0.75rem;
   color: var(--muted);
