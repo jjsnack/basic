@@ -21,5 +21,8 @@
   </div>
 </section>
 
-{{ $js := resources.Get "js/console.js" | resources.Minify | resources.Fingerprint }}
+{{/* tunes.js sets window.TUNES; console.js reads it — concat keeps that order. */}}
+{{ $tunes := resources.Get "js/tunes.js" }}
+{{ $console := resources.Get "js/console.js" }}
+{{ $js := slice $tunes $console | resources.Concat "js/console.bundle.js" | resources.Minify | resources.Fingerprint }}
 <script src="{{ $js.RelPermalink }}" defer></script>
