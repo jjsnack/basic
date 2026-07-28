@@ -1,0 +1,21 @@
+{{- /* {{< gist "user" "gist-id" >}} — embeds a GitHub gist.
+   Hugo's built-in gist shortcode was removed in v0.156; this fetches the
+   gist via the GitHub API at build time and renders it with the site's own
+   Chroma highlighting instead of GitHub's unstyled <script> embed. */ -}}
+{{- $user := .Get 0 -}}
+{{- $id := .Get 1 -}}
+{{- if or (not $user) (not $id) }}{{ errorf "gist shortcode: usage {{</* gist \"user\" \"gist-id\" */>}} (%s)" .Position }}{{ end -}}
+
+{{- $try := try (resources.GetRemote (printf "https://api.github.com/gists/%s" $id)) -}}
+{{- with $try -}}
+  {{- if .Err }}{{ errorf "gist shortcode: failed to fetch gist %s: %s (%s)" $id .Err $.Position }}
+  {{- else -}}
+    {{- $data := transform.Unmarshal .Value.Content -}}
+    {{- range $name, $f := $data.files }}
+<figure class="code-import">
+  <figcaption><a href="https://gist.github.com/{{ $user }}/{{ $id }}" target="_blank" rel="noopener noreferrer">{{ $user }}/{{ $name }}</a></figcaption>
+  {{ transform.Highlight $f.content (lower $f.language) }}
+</figure>
+    {{- end -}}
+  {{- end -}}
+{{- end -}}

@@ -1,0 +1,37 @@
+{{- /* {{< github "owner/repo" >}} — card linking to a GitHub repo.
+   Auto-fetches description/language/stars from the GitHub API at build time;
+   pass desc="…" lang="…" stars="…" to override (or skip the network call). */ -}}
+{{- $repo := .Get 0 -}}
+{{- with .Get "repo" }}{{ $repo = . }}{{ end -}}
+{{- if not $repo }}{{ errorf "github shortcode: repo required, e.g. {{</* github \"owner/name\" */>}} (%s)" .Position }}{{ end -}}
+
+{{- $desc := .Get "desc" -}}
+{{- $lang := .Get "lang" -}}
+{{- $stars := .Get "stars" -}}
+{{- if not (and $desc $lang $stars) -}}
+  {{- $try := try (resources.GetRemote (printf "https://api.github.com/repos/%s" $repo)) -}}
+  {{- with $try -}}
+    {{- if not .Err -}}
+      {{- with .Value -}}
+        {{- $data := transform.Unmarshal .Content -}}
+        {{- if not $desc }}{{ $desc = $data.description }}{{ end -}}
+        {{- if not $lang }}{{ $lang = $data.language }}{{ end -}}
+        {{- if not $stars }}{{ $stars = int $data.stargazers_count }}{{ end -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+<a class="repo-card" href="https://github.com/{{ $repo }}" target="_blank" rel="noopener noreferrer">
+  <svg class="repo-card__icon" viewBox="0 0 16 16" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38C13.71 14.53 16 11.54 16 8c0-4.42-3.58-8-8-8z"/></svg>
+  <span class="repo-card__main">
+    <span class="repo-card__name">{{ $repo }}</span>
+    {{- with $desc }}<span class="repo-card__desc">{{ . }}</span>{{ end }}
+  </span>
+  {{- if or $lang $stars }}
+  <span class="repo-card__meta">
+    {{- with $lang }}<span class="repo-card__stat">{{ . }}</span>{{ end }}
+    {{- with $stars }}<span class="repo-card__stat">★ {{ . }}</span>{{ end }}
+  </span>
+  {{- end }}
+</a>

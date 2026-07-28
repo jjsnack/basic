@@ -1,5 +1,13 @@
-{{/* Markdown images become <figure>s; alt text doubles as caption. */}}
+{{/* Markdown images become <figure>s; alt text doubles as caption.
+     Click to zoom, a pure-CSS lightbox via :target — no JS. */}}
+{{ $id := printf "img-%d" .Ordinal }}
 <figure class="post-figure">
-  <img src="{{ .Destination | safeURL }}" alt="{{ .PlainText }}" loading="lazy" decoding="async"{{ with .Title }} title="{{ . }}"{{ end }} />
+  <a href="#{{ $id }}" class="post-figure__zoom" aria-label="Zoom image">
+    <img src="{{ .Destination | safeURL }}" alt="{{ .PlainText }}" loading="lazy" decoding="async"{{ with .Title }} title="{{ . }}"{{ end }} />
+  </a>
   {{ with .PlainText }}<figcaption>{{ . }}</figcaption>{{ end }}
 </figure>
+<div class="lightbox" id="{{ $id }}">
+  <a href="{{ .Page.RelPermalink }}" class="lightbox__backdrop" aria-label="Close"></a>
+  <img src="{{ .Destination | safeURL }}" alt="{{ .PlainText }}" />
+</div>

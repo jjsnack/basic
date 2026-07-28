@@ -1,0 +1,28 @@
+{{- /* {{< mailto "user@example.com" >}} or {{< mailto "user@example.com" "Subject line" "link text" >}}
+   No plaintext "mailto:" or address ships in the HTML — Hugo's own --minify
+   pass decodes HTML entities back to plain text, so entity-encoding alone
+   doesn't survive a production build. Instead the real link is base64'd into
+   data attributes and assembled by a few lines of inline JS on load, so
+   regex/text scrapers never see a working mailto: string. Needs JS — this is
+   the one shortcode in the theme that does. */ -}}
+{{- $email := .Get 0 -}}
+{{- with .Get "email" }}{{ $email = . }}{{ end -}}
+{{- if not $email }}{{ errorf "mailto shortcode: email required, e.g. {{</* mailto \"user@example.com\" */>}} (%s)" .Position }}{{ end -}}
+{{- $subject := .Get 1 -}}
+{{- with .Get "subject" }}{{ $subject = . }}{{ end -}}
+{{- $text := .Get 2 -}}
+{{- with .Get "text" }}{{ $text = . }}{{ end -}}
+{{- if not $text }}{{ $text = $email }}{{ end -}}
+
+{{- $href := printf "mailto:%s" $email -}}
+{{- with $subject -}}
+  {{- $q := replace . "%" "%25" -}}
+  {{- $q = replace $q " " "%20" -}}
+  {{- $q = replace $q "&" "%26" -}}
+  {{- $q = replace $q "#" "%23" -}}
+  {{- $q = replace $q "?" "%3F" -}}
+  {{- $href = printf "%s?subject=%s" $href $q -}}
+{{- end -}}
+
+<a class="mailto-link" data-href="{{ base64Encode $href }}" data-text="{{ base64Encode $text }}"></a>
+<script>(function(){var a=document.currentScript.previousElementSibling;a.href=atob(a.dataset.href);a.textContent=atob(a.dataset.text);})()</script>

@@ -1,0 +1,7 @@
+{{- /* {{< badge "MIT" >}} or {{< badge "beta" color="orange" >}}
+   color: one of the pop palette names (red/orange/yellow/green/cyan/blue/purple/pink), defaults to accent. */ -}}
+{{- $text := .Get 0 -}}
+{{- if not $text }}{{ errorf "badge shortcode: text required, e.g. {{</* badge \"MIT\" */>}} (%s)" .Position }}{{ end -}}
+{{- $color := .Get 1 -}}
+{{- with .Get "color" }}{{ $color = . }}{{ end -}}
+<span class="badge{{ with $color }} badge--{{ . }}{{ end }}">{{ $text }}</span>

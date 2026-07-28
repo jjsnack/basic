@@ -1,0 +1,42 @@
+{{- /* {{< huggingface "owner/model" >}} — card linking to a Hugging Face model.
+   Pass type="dataset" for a dataset repo. Auto-fetches pipeline tag/likes/downloads
+   at build time; pass desc="…" likes="…" downloads="…" to override. */ -}}
+{{- $repo := .Get 0 -}}
+{{- with .Get "repo" }}{{ $repo = . }}{{ end -}}
+{{- if not $repo }}{{ errorf "huggingface shortcode: repo required, e.g. {{</* huggingface \"owner/model\" */>}} (%s)" .Position }}{{ end -}}
+{{- $kind := .Get "type" | default "model" -}}
+{{- $endpoint := "models" -}}
+{{- if eq $kind "dataset" }}{{ $endpoint = "datasets" }}{{ end -}}
+
+{{- $desc := .Get "desc" -}}
+{{- $pipeline := "" -}}
+{{- $likes := .Get "likes" -}}
+{{- $downloads := .Get "downloads" -}}
+{{- if not (and $likes $downloads) -}}
+  {{- $try := try (resources.GetRemote (printf "https://huggingface.co/api/%s/%s" $endpoint $repo)) -}}
+  {{- with $try -}}
+    {{- if not .Err -}}
+      {{- with .Value -}}
+        {{- $data := transform.Unmarshal .Content -}}
+        {{- $pipeline = $data.pipeline_tag -}}
+        {{- if not $likes }}{{ $likes = int $data.likes }}{{ end -}}
+        {{- if not $downloads }}{{ $downloads = int $data.downloads }}{{ end -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+<a class="repo-card" href="https://huggingface.co/{{ if eq $kind "dataset" }}datasets/{{ end }}{{ $repo }}" target="_blank" rel="noopener noreferrer">
+  <span class="repo-card__icon" aria-hidden="true">🤗</span>
+  <span class="repo-card__main">
+    <span class="repo-card__name">{{ $repo }}</span>
+    {{- with $desc }}<span class="repo-card__desc">{{ . }}</span>{{ end }}
+  </span>
+  {{- if or $pipeline $likes $downloads }}
+  <span class="repo-card__meta">
+    {{- with $pipeline }}<span class="repo-card__stat">{{ . }}</span>{{ end }}
+    {{- with $downloads }}<span class="repo-card__stat">⬇ {{ . }}</span>{{ end }}
+    {{- with $likes }}<span class="repo-card__stat">♥ {{ . }}</span>{{ end }}
+  </span>
+  {{- end }}
+</a>

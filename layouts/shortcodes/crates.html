@@ -1,0 +1,38 @@
+{{- /* {{< crates "serde" >}} — card linking to a crates.io package.
+   Auto-fetches description/version/downloads at build time; pass desc="…"
+   version="…" downloads="…" to override (or skip the network call). */ -}}
+{{- $pkg := .Get 0 -}}
+{{- with .Get "pkg" }}{{ $pkg = . }}{{ end -}}
+{{- if not $pkg }}{{ errorf "crates shortcode: crate name required, e.g. {{</* crates \"serde\" */>}} (%s)" .Position }}{{ end -}}
+
+{{- $desc := .Get "desc" -}}
+{{- $version := .Get "version" -}}
+{{- $downloads := .Get "downloads" -}}
+{{- if not (and $desc $version $downloads) -}}
+  {{- $opts := dict "headers" (dict "User-Agent" "basic-hugo-theme (https://github.com/jjsnack/basic)") -}}
+  {{- $try := try (resources.GetRemote (printf "https://crates.io/api/v1/crates/%s" $pkg) $opts) -}}
+  {{- with $try -}}
+    {{- if not .Err -}}
+      {{- with .Value -}}
+        {{- $data := (transform.Unmarshal .Content).crate -}}
+        {{- if not $desc }}{{ $desc = $data.description }}{{ end -}}
+        {{- if not $version }}{{ $version = $data.max_stable_version }}{{ end -}}
+        {{- if not $downloads }}{{ $downloads = int $data.downloads }}{{ end -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+<a class="repo-card" href="https://crates.io/crates/{{ $pkg }}" target="_blank" rel="noopener noreferrer">
+  <span class="repo-card__icon" aria-hidden="true">📦</span>
+  <span class="repo-card__main">
+    <span class="repo-card__name">{{ $pkg }}</span>
+    {{- with $desc }}<span class="repo-card__desc">{{ . }}</span>{{ end }}
+  </span>
+  {{- if or $version $downloads }}
+  <span class="repo-card__meta">
+    {{- with $version }}<span class="repo-card__stat">v{{ . }}</span>{{ end }}
+    {{- with $downloads }}<span class="repo-card__stat">⬇ {{ . }}</span>{{ end }}
+  </span>
+  {{- end }}
+</a>

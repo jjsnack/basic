@@ -1,0 +1,37 @@
+{{- /* {{< npm "left-pad" >}} — card linking to an npm package.
+   Auto-fetches description/version/license from the registry at build time;
+   pass desc="…" version="…" license="…" to override (or skip the network call). */ -}}
+{{- $pkg := .Get 0 -}}
+{{- with .Get "pkg" }}{{ $pkg = . }}{{ end -}}
+{{- if not $pkg }}{{ errorf "npm shortcode: package name required, e.g. {{</* npm \"left-pad\" */>}} (%s)" .Position }}{{ end -}}
+
+{{- $desc := .Get "desc" -}}
+{{- $version := .Get "version" -}}
+{{- $license := .Get "license" -}}
+{{- if not (and $desc $version $license) -}}
+  {{- $try := try (resources.GetRemote (printf "https://registry.npmjs.org/%s" $pkg)) -}}
+  {{- with $try -}}
+    {{- if not .Err -}}
+      {{- with .Value -}}
+        {{- $data := transform.Unmarshal .Content -}}
+        {{- if not $desc }}{{ $desc = $data.description }}{{ end -}}
+        {{- if not $version }}{{ $version = index $data "dist-tags" "latest" }}{{ end -}}
+        {{- if not $license }}{{ $license = $data.license }}{{ end -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+<a class="repo-card" href="https://www.npmjs.com/package/{{ $pkg }}" target="_blank" rel="noopener noreferrer">
+  <span class="repo-card__icon" aria-hidden="true">📦</span>
+  <span class="repo-card__main">
+    <span class="repo-card__name">{{ $pkg }}</span>
+    {{- with $desc }}<span class="repo-card__desc">{{ . }}</span>{{ end }}
+  </span>
+  {{- if or $version $license }}
+  <span class="repo-card__meta">
+    {{- with $version }}<span class="repo-card__stat">v{{ . }}</span>{{ end }}
+    {{- with $license }}<span class="repo-card__stat">{{ . }}</span>{{ end }}
+  </span>
+  {{- end }}
+</a>
