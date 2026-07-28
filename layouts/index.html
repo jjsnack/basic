@@ -4,6 +4,9 @@
   {{ $posts := where site.RegularPages "Type" "posts" }}
   {{ $intro := or .Content site.Params.description }}
 
+  {{/* The front door has no visible page title by design; give it a real h1 for
+       the document outline / screen readers without changing the visible layout. */}}
+  <h1 class="visually-hidden">{{ site.Title }}</h1>
   {{ with $intro }}<div class="intro">{{ . }}</div>{{ end }}
 
   {{ with index $posts 0 }}
