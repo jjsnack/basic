@@ -1,0 +1,14 @@
+/* Dracula — the canonical dark palette (draculatheme.com spec).
+   Concatenated after main.css (see baseof.html). */
+:root[data-theme="dracula"] {
+  --bg: #282a36; --fg: #f8f8f2; --muted: #6272a4; --border: #44475a;
+  --accent: #bd93f9; --accent-fg: #282a36; --selection: #44475a; --code: #ff79c6;
+  --c-red: #ff5555; --c-orange: #ffb86c; --c-yellow: #f1fa8c; --c-green: #50fa7b;
+  --c-cyan: #8be9fd; --c-blue: #8be9fd; --c-purple: #bd93f9; --c-pink: #ff79c6;
+  /* sets: highlight stays muted grey, each surface a distinct pop */
+  --link: var(--c-cyan);
+  --pill: var(--c-green);  --pill-fg: var(--bg);
+  --row:  var(--c-purple); --row-fg:  var(--bg);
+  --term: var(--c-pink);   --term-fg: var(--bg);
+  --focus: var(--c-orange);
+}

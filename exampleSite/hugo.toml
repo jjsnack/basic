@@ -4,8 +4,11 @@ title = "basic"
 theme = "basic"
 themesDir = "../.."
 
+[pagination]
+  pagerSize = 12
+
 [params]
-  description = "A minimal black-and-white theme for text-first blogs."
+  description = "A minimal theme for text-first blogs."
   footerNote = "Built with the basic theme."
 
 [[menu.main]]
@@ -26,6 +29,10 @@ themesDir = "../.."
 
 [markup.goldmark.renderer]
   unsafe = true
+
+# Syntax highlighting via CSS classes so the theme (main.css) colours tokens.
+[markup.highlight]
+  noClasses = false
 
 # LaTeX math: $...$ / \(...\) inline, $$...$$ / \[...\] block
 [markup.goldmark.extensions.passthrough]

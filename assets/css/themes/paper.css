@@ -1,0 +1,15 @@
+/* Paper — warm light, ink on cream with vermilion + jewel-tone pops.
+   Concatenated after main.css (see baseof.html); :root[...] matches the dark
+   media query's specificity and wins by source order. */
+:root[data-theme="paper"] {
+  --bg: #faf4e8; --fg: #2b2b2b; --muted: #8a7f6a; --border: #e4d8c0;
+  --accent: #c0392b; --accent-fg: #ffffff; --selection: #efe2c6; --code: #b83280;
+  --c-red: #c0392b; --c-orange: #cc6a1a; --c-yellow: #b8860b; --c-green: #2e8b57;
+  --c-cyan: #1f7a8c; --c-blue: #2c5f8a; --c-purple: #7b4bc4; --c-pink: #b83280;
+  /* sets: each surface its own hue */
+  --link: var(--c-red);
+  --pill: var(--c-purple); --pill-fg: #ffffff;
+  --row:  var(--c-blue);   --row-fg:  #ffffff;
+  --term: var(--c-green);  --term-fg: #ffffff;
+  --focus: var(--c-orange);
+}
