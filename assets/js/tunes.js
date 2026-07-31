@@ -52,6 +52,28 @@
              47, 0, 0, 0, 0, 0, 0, 0, 43, 0, 0, 0, 0, 0, 0, 0,
              38, 0, 0, 0, 0, 0, 0, 0, 45, 0, 0, 0, 0, 0, 0, 0,
              47, 0, 0, 0, 0, 0, 0, 0, 43, 0, 0, 0, 0, 0, 0, 0]
+    },
+    // D whole-tone, sine lead — no eighth-note rests, a continuous rippling
+    // current instead of a beat-driven melody. Whole-tone (no semitones) is
+    // the classic "underwater" scale (Debussy, water-level video game themes)
+    // since it has no leading tone pulling anywhere — it just drifts. One
+    // swelling 8-bar wave: rises to a crest in bar 5, recedes back to the
+    // tonic to loop. Bass pedal follows the same swell (D, up to the tritone
+    // G#, back to D) rather than outlining a chord progression.
+    ocean: {
+      bpm: 78, wave: "sine",
+      lead: [62, 64, 66, 64, 62, 60, 58, 60,
+             64, 66, 68, 66, 64, 62, 60, 62,
+             66, 68, 70, 68, 66, 64, 62, 64,
+             68, 70, 72, 70, 68, 66, 64, 66,
+             70, 72, 74, 76, 74, 72, 70, 68,
+             68, 66, 64, 62, 64, 66, 68, 70,
+             64, 62, 60, 58, 60, 62, 64, 66,
+             62, 60, 58, 56, 54, 52, 50, 50],
+      bass: [38, 0, 0, 0, 0, 0, 0, 0, 38, 0, 0, 0, 0, 0, 0, 0,
+             42, 0, 0, 0, 0, 0, 0, 0, 44, 0, 0, 0, 0, 0, 0, 0,
+             44, 0, 0, 0, 0, 0, 0, 0, 42, 0, 0, 0, 0, 0, 0, 0,
+             38, 0, 0, 0, 0, 0, 0, 0, 38, 0, 0, 0, 0, 0, 0, 0]
     }
   };
   if (typeof module !== "undefined" && module.exports) module.exports = TUNES;
