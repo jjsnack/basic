@@ -1,0 +1,14 @@
+/* Ocean — deep navy water, foam-pale ink, teal + coral pops.
+   Concatenated after main.css (see baseof.html). */
+:root[data-theme="ocean"] {
+  --bg: #0b1e2d; --fg: #dceef5; --muted: #5c8aa3; --border: #1c3a4f;
+  --accent: #22b8cf; --accent-fg: #06232e; --selection: #1e4a5f; --code: #ffa94d;
+  --c-red: #ff6b6b; --c-orange: #ffa94d; --c-yellow: #ffd93d; --c-green: #38d9a9;
+  --c-cyan: #22d3ee; --c-blue: #4dabf7; --c-purple: #9775fa; --c-pink: #f783ac;
+  /* sets: cool water surfaces, coral console for contrast */
+  --link: var(--c-cyan);
+  --pill: var(--c-green); --pill-fg: var(--bg);
+  --row:  var(--c-blue);  --row-fg:  var(--bg);
+  --term: var(--c-pink);  --term-fg: var(--bg);
+  --focus: var(--c-orange);
+}
