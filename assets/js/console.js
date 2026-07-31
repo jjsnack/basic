@@ -145,6 +145,28 @@
       var cmdHistory = []; // local — do not shadow window.history
       var histIdx = 0;     // cursor for ↑/↓ recall; == length means "current line"
 
+      // A new tab is a new instance for anything session-scoped below (console
+      // open/closed, music) — even one opened via a link, whose sessionStorage
+      // would otherwise arrive as a clone of the opener's. window.name isn't
+      // carried to a new auxiliary browsing context (only across navigations
+      // within the same tab it's already set on), so an empty window.name
+      // reliably means "first load of a tab nobody has claimed yet."
+      if (!window.name) {
+        window.name = "console-" + Math.random().toString(36).slice(2);
+        sessionStorage.removeItem("music");
+        sessionStorage.removeItem("consoleOpen");
+      }
+
+      // Console open/closed state survives full-page navigation (sessionStorage,
+      // same tab only) — this is a static site, every link click is a real
+      // reload, so without this the window would slam shut every time you
+      // click around. Restored without focus so it doesn't steal focus from
+      // the page you just navigated to.
+      if (sessionStorage.getItem("consoleOpen") === "1") {
+        root.hidden = false;
+        launch.setAttribute("aria-expanded", "true");
+      }
+
       var write = function (line, kind) {
         var el = document.createElement("div");
         el.className = "console__line" + (kind ? " console__line--" + kind : "");
@@ -202,23 +224,52 @@
         };
       })();
 
-      // Restore music across page navigations. Autoplay policy blocks a fresh
-      // load with no user gesture, so we never call on() here (a gesture-less
-      // resume() stays pending and would wedge `playing`); instead we resume on
-      // the first interaction. ponytail: relies on stored pref, not tab session.
+      // Only the tab you're actually looking at should make sound — otherwise
+      // every open tab runs its own copy of the loop, out of phase with the
+      // others. Web Locks would coordinate this but Safari doesn't implement
+      // it; Page Visibility works in every browser and matches what a user
+      // expects anyway (switch tabs, the music follows).
+      //
+      // "on" lives in sessionStorage: it survives a full-page navigation in
+      // this tab (a static site — every link click is a real reload) without
+      // carrying into a genuinely new tab (see the window.name gate above).
+      //
+      // Resuming is ONLY ever attempted from a real pointerdown/keydown, never
+      // from visibilitychange or on load. A gesture-less ctx.resume() call
+      // doesn't reject when the browser blocks it — its promise just stays
+      // pending forever — so `chiptune.on()`'s `playing = true` would never
+      // get reverted, wedging every later, gesture-backed attempt into a
+      // silent no-op (`if (playing) return Promise.resolve();`). One real
+      // click/keydown per fresh page load is the platform's floor here, not
+      // something scriptable away short of turning the site into an SPA.
+      var resumeIfWanted = function () {
+        if (sessionStorage.getItem("music") === "on" && document.visibilityState === "visible") {
+          chiptune.on().then(function () {}, function () {});
+        }
+      };
+      document.addEventListener("visibilitychange", function () {
+        if (document.visibilityState === "hidden") chiptune.off(); // safe: synchronous, no promise involved
+      });
+      document.addEventListener("pointerdown", resumeIfWanted);
+      document.addEventListener("keydown", resumeIfWanted);
+
       (function () {
         var v = localStorage.getItem("musicVolume");
         if (v != null) chiptune.setVolume(+v);
-        if (localStorage.getItem("music") !== "on") return;
-        chiptune.setTune(document.documentElement.dataset.theme);
-        var arm = function () {
-          document.removeEventListener("pointerdown", arm);
-          document.removeEventListener("keydown", arm);
-          chiptune.on().then(function () {}, function () {});
-        };
-        document.addEventListener("pointerdown", arm);
-        document.addEventListener("keydown", arm);
       })();
+
+      // Theme is a global preference (unlike music), so it stays on
+      // localStorage and syncs live to sibling tabs already open — only
+      // fires in OTHER tabs, not the one that made the change.
+      window.addEventListener("storage", function (e) {
+        if (e.key === "theme") {
+          if (e.newValue) document.documentElement.dataset.theme = e.newValue;
+          else delete document.documentElement.dataset.theme;
+          chiptune.setTune(e.newValue);
+        } else if (e.key === "musicVolume" && e.newValue != null) {
+          chiptune.setVolume(+e.newValue);
+        }
+      });
 
       var applyTheme = function (mode) {
         if (mode === "auto") { localStorage.removeItem("theme"); delete document.documentElement.dataset.theme; }
@@ -230,6 +281,7 @@
         root.hidden = false;
         launch.setAttribute("aria-expanded", "true");
         input.focus();
+        sessionStorage.setItem("consoleOpen", "1");
       };
       var close = function () {
         // Music keeps playing when closed — stop it with `music stop`.
@@ -239,6 +291,7 @@
         expandBtn.setAttribute("aria-pressed", "false");
         launch.setAttribute("aria-expanded", "false");
         launch.focus();
+        sessionStorage.removeItem("consoleOpen");
       };
       var toggleDock = function () {
         var docked = root.classList.toggle("console--docked");
@@ -265,14 +318,14 @@
         res.lines.forEach(function (l) { write(l); });
         if (res.theme) applyTheme(res.theme);
         if (res.music === "on") {
-          localStorage.setItem("music", "on");
+          sessionStorage.setItem("music", "on");
           chiptune.setTune(document.documentElement.dataset.theme);
           chiptune.on().then(
             function () { write({ text: "♪ music on" }); log.scrollTop = log.scrollHeight; },
             function () { write({ text: "music blocked by the browser — interact with the page and retry." }); log.scrollTop = log.scrollHeight; }
           );
         }
-        if (res.music === "off") { localStorage.removeItem("music"); chiptune.off(); write({ text: "music off" }); }
+        if (res.music === "off") { sessionStorage.removeItem("music"); chiptune.off(); write({ text: "music off" }); }
         if (res.volume != null) { localStorage.setItem("musicVolume", res.volume); chiptune.setVolume(res.volume); }
         input.value = "";
         histIdx = cmdHistory.length; // reset recall to the (empty) current line
