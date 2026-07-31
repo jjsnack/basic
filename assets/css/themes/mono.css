@@ -1,0 +1,16 @@
+/* Mono — zero hue anywhere, unlike the default light/dark's one rust accent.
+   The pop palette is 8 grey steps instead of 8 hues, so syntax highlighting
+   and mermaid diagrams read by weight, not colour — that's the point, not an
+   oversight. Concatenated after main.css (see baseof.html). */
+:root[data-theme="mono"] {
+  --bg: #ffffff; --fg: #000000; --muted: #737373; --border: #dddddd;
+  --accent: #000000; --accent-fg: #ffffff; --selection: #e0e0e0; --code: #000000;
+  --c-red: #262626; --c-orange: #333333; --c-yellow: #404040; --c-green: #4d4d4d;
+  --c-cyan: #595959; --c-blue: #666666; --c-purple: #737373; --c-pink: #808080;
+  /* sets: dark end of the grey scale so fill text stays legible */
+  --link: var(--fg);
+  --pill: var(--c-orange); --pill-fg: #ffffff;
+  --row:  var(--c-red);    --row-fg:  #ffffff;
+  --term: var(--fg);       --term-fg: var(--bg);
+  --focus: var(--c-yellow);
+}

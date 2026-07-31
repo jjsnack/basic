@@ -1,0 +1,14 @@
+/* Forest — deep moss-black dark, rust/amber pop, fern and clay accents.
+   Concatenated after main.css (see baseof.html). */
+:root[data-theme="forest"] {
+  --bg: #16211a; --fg: #e4e8d9; --muted: #75846a; --border: #2c3a25;
+  --accent: #c98a4b; --accent-fg: #16211a; --selection: #33452c; --code: #8fbf7a;
+  --c-red: #d97757; --c-orange: #c98a4b; --c-yellow: #d8c66a; --c-green: #8fbf7a;
+  --c-cyan: #5fae9d; --c-blue: #6d94ab; --c-purple: #9b82b3; --c-pink: #c97b93;
+  /* sets: fern pills, wildflower rows, clay terminal */
+  --link: var(--c-cyan);
+  --pill: var(--c-green);  --pill-fg: var(--bg);
+  --row:  var(--c-purple); --row-fg:  var(--bg);
+  --term: var(--c-red);    --term-fg: var(--bg);
+  --focus: var(--c-yellow);
+}

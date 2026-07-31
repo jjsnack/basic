@@ -1,0 +1,15 @@
+/* Winebar — burgundy-led warm dark: olive (true olive, not drab khaki) ranks
+   second, mustard third, everything else kept muted so the three don't get
+   crowded out. Concatenated after main.css (see baseof.html). */
+:root[data-theme="winebar"] {
+  --bg: #241a1a; --fg: #ebdbb2; --muted: #8c7b6b; --border: #3a2a28;
+  --accent: #8c2f3f; --accent-fg: #ebdbb2; --selection: #4a2530; --code: #d1a537;
+  --c-red: #8c2f3f; --c-orange: #b3701c; --c-yellow: #d1a537; --c-green: #8a9440;
+  --c-cyan: #6d8f7a; --c-blue: #5f7d8c; --c-purple: #7a4a5c; --c-pink: #a15c68;
+  /* sets: burgundy console, olive links + pills + rows, mustard just focus */
+  --link: var(--c-green);
+  --pill: var(--c-green); --pill-fg: var(--fg);
+  --row:  var(--c-green); --row-fg:  var(--fg);
+  --term: var(--c-red);   --term-fg: var(--fg);
+  --focus: var(--c-yellow);
+}
