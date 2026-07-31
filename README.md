@@ -128,9 +128,9 @@ the page works fully with JS off. Type `help` inside it for the full command
 list; the two with real content:
 
 - `theme set <name>` — switch theme. Modes: `light`, `dark`, `auto`, plus any
-  colour theme file under `assets/css/themes/*.css` (ships with `paper`,
-  `dracula`, `valentine`, `ocean`). Persisted to `localStorage`, no flash on
-  reload.
+  colour theme file under `assets/css/themes/*.css` (ships with `dracula`,
+  `forest`, `mono`, `ocean`, `paper`, `valentine`, `winebar`).
+  Persisted to `localStorage`, no flash on reload.
 - `music play` / `music stop` / `music volume <0-10>` — an 8-bit soundtrack
   synthesised live with WebAudio (no audio files), one tune per theme,
   keeps playing across page navigation.

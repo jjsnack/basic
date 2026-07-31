@@ -80,6 +80,39 @@
              42, 0, 0, 0, 0, 0, 0, 0, 44, 0, 0, 0, 0, 0, 0, 0,
              44, 0, 0, 0, 0, 0, 0, 0, 42, 0, 0, 0, 0, 0, 0, 0,
              38, 0, 0, 0, 0, 0, 0, 0, 38, 0, 0, 0, 0, 0, 0, 0]
+    },
+    // D minor pentatonic, mellow triangle lead — an unhurried 4-bar woodland
+    // loop, sparse like default/dracula (rests, not a filled-in line).
+    forest: {
+      bpm: 80, wave: "triangle",
+      lead: [62, 0, 65, 0, 69, 0, 65, 0, 62, 0, 60, 0, 65, 0, 69, 0,
+             72, 0, 69, 0, 65, 0, 69, 0, 62, 0, 65, 0, 60, 0, 62, 0],
+      bass: [38, 0, 0, 0, 0, 0, 0, 0, 43, 0, 0, 0, 0, 0, 0, 0,
+             41, 0, 0, 0, 0, 0, 0, 0, 38, 0, 0, 0, 0, 0, 0, 0]
+    },
+    // A I-vi-ii-V turnaround (the "rhythm changes" progression) — mellow
+    // triangle lead instead of square for a warmer combo tone, syncopated
+    // off-beat entrances instead of on-the-beat hits (no swing timing in the
+    // engine, so the swing has to come from where the rests fall), a
+    // chromatic blue-note resolution back to the tonic in bar 4. Bass keeps
+    // the oom-pah spacing (root + a jazzier 3rd/7th colour tone per bar,
+    // like paper's beats 1 and 3) rather than a continuous walk — the
+    // engine's long note-ring would turn a true walking bass into mush.
+    winebar: {
+      bpm: 92, wave: "triangle",
+      lead: [0, 69, 73, 0, 76, 0, 73, 69, 0, 66, 69, 0, 73, 0, 69, 66,
+             0, 71, 74, 0, 78, 0, 74, 71, 0, 68, 71, 72, 0, 71, 69, 0],
+      bass: [45, 0, 0, 0, 49, 0, 0, 0, 42, 0, 0, 0, 52, 0, 0, 0,
+             47, 0, 0, 0, 50, 0, 0, 0, 40, 0, 0, 0, 44, 0, 0, 0]
+    },
+    // Bare octaves, no thirds — a stripped 4-bar loop, deliberately flat and
+    // undecorated to match the theme's zero-colour palette.
+    mono: {
+      bpm: 84, wave: "square",
+      lead: [60, 0, 0, 0, 60, 0, 0, 0, 65, 0, 0, 0, 65, 0, 0, 0,
+             60, 0, 0, 0, 60, 0, 0, 0, 67, 0, 0, 0, 65, 0, 0, 0],
+      bass: [48, 0, 0, 0, 0, 0, 0, 0, 53, 0, 0, 0, 0, 0, 0, 0,
+             48, 0, 0, 0, 0, 0, 0, 0, 55, 0, 0, 0, 53, 0, 0, 0]
     }
   };
   if (typeof module !== "undefined" && module.exports) module.exports = TUNES;

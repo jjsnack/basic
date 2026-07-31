@@ -69,8 +69,8 @@
 
       case "theme": {
         var sub = (cmd.args[0] || "").toLowerCase();
-        // base modes first, then colour palettes (see main.css)
-        var modes = ["light", "dark", "auto", "paper", "dracula", "valentine", "ocean"];
+        // auto, light, dark, then colour palettes alphabetically (see main.css)
+        var modes = ["auto", "light", "dark", "dracula", "forest", "mono", "ocean", "paper", "valentine", "winebar"];
         if (sub === "list") {
           return { lines: modes.map(function (m) { return { text: "   " + m }; }) };
         }
@@ -342,8 +342,11 @@
     assert.strictEqual(run("theme set dracula", {}).theme, "dracula");
     assert.strictEqual(run("theme set valentine", {}).theme, "valentine");
     assert.strictEqual(run("theme set ocean", {}).theme, "ocean");
+    assert.strictEqual(run("theme set forest", {}).theme, "forest");
+    assert.strictEqual(run("theme set winebar", {}).theme, "winebar");
+    assert.strictEqual(run("theme set mono", {}).theme, "mono");
     assert.ok(/usage: theme set/.test(run("theme set purple", {}).lines[0].text));
-    assert.ok(/dark/.test(run("theme list", {}).lines[1].text));
+    assert.ok(/dark/.test(run("theme list", {}).lines[2].text));
     assert.ok(/Subcommands/.test(run("theme", {}).lines[4].text));
     assert.strictEqual(run("music play", {}).music, "on");
     assert.strictEqual(run("music stop", {}).music, "off");
