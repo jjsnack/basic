@@ -109,8 +109,8 @@ Every colour flows from CSS vars, so a theme controls all of it:
   (`.chroma .k` keywords, `.s` strings, `.m` numbers, `.nf` functions, etc).
   Requires `markup.highlight.noClasses = false` in `hugo.toml`.
 - **Mermaid diagrams**: `baseof.html` reads the pop palette + core vars at load
-  and feeds them to `mermaid.initialize({ theme: "base", themeVariables })`.
-  Diagrams are tinted at page load — reload after switching themes.
+  and feeds them to `mermaid.initialize({ theme: "base", themeVariables })`,
+  then redraws the diagrams whenever `data-theme` or the OS colour scheme changes.
 - **Pop palette**: `--c-red --c-orange --c-yellow --c-green --c-cyan --c-blue
   --c-purple --c-pink`. Themes remap these; they feed syntax + mermaid and are
   handy source colours for the sets below.

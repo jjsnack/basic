@@ -406,6 +406,51 @@
         document.addEventListener("pointerup", up);
       });
 
+      // SPIKE: in-page navigation. Same-site links swap header/main/footer
+      // instead of reloading, so the console and the music never stop. Any
+      // page this can't swap safely (inline scripts, mermaid, a failed fetch)
+      // falls back to a normal load.
+      var here = location.pathname + location.search;
+      history.scrollRestoration = "manual";
+      var swap = function (url, push) {
+        fetch(url).then(function (r) {
+          if (!r.ok || !/text\/html/.test(r.headers.get("content-type") || "")) throw new Error("not a page");
+          return r.text();
+        }).then(function (html) {
+          var doc = new DOMParser().parseFromString(html, "text/html");
+          // mailto and mermaid need their scripts to run, which swapped-in markup won't do.
+          if (doc.querySelector("main script, .mermaid")) throw new Error("has scripts");
+          var parts = [".site-header", "main", ".site-footer"];
+          if (!parts.every(function (s) { return document.querySelector(s) && doc.querySelector(s); })) throw new Error("unknown layout");
+          if (push) {
+            history.replaceState({ y: scrollY }, "");
+            history.pushState({ y: 0 }, "", url);
+          }
+          parts.forEach(function (s) { document.querySelector(s).replaceWith(document.adoptNode(doc.querySelector(s))); });
+          document.title = doc.title;
+          here = location.pathname + location.search;
+          var target = location.hash && document.getElementById(decodeURIComponent(location.hash.slice(1)));
+          if (target) target.scrollIntoView(); else scrollTo(0, (history.state && history.state.y) || 0);
+          var main = document.querySelector("main");
+          main.setAttribute("tabindex", "-1");
+          main.focus({ preventScroll: true }); // so screen readers and Tab start from the new content
+        }).catch(function () {
+          if (push) location.href = url; else location.reload();
+        });
+      };
+      document.addEventListener("click", function (e) {
+        var a = e.target.closest && e.target.closest("a[href]");
+        if (!a || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        if ((a.target && a.target !== "_self") || a.hasAttribute("download") || a.origin !== location.origin) return;
+        if (a.pathname + a.search === here) return; // same-page anchor: the browser jumps on its own
+        if (/\.(xml|json|txt|pdf|png|jpe?g|gif|svg|webp|zip)$/i.test(a.pathname)) return;
+        e.preventDefault();
+        swap(a.href, true);
+      });
+      window.addEventListener("popstate", function () {
+        if (location.pathname + location.search !== here) swap(location.href, false);
+      });
+
       write({ text: "\n" });
       write({ text: "type `help` to see available commands" });
       launch.hidden = false;
