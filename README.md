@@ -21,13 +21,13 @@ hugo mod init github.com/you/your-site
 # hugo.toml
 [module]
   [[module.imports]]
-    path = "github.com/jjsnacks/basic"
+    path = "github.com/jjsnack/basic"
 ```
 
 **Or as a git submodule:**
 
 ```bash
-git submodule add https://github.com/jjsnacks/basic themes/basic
+git submodule add https://github.com/jjsnack/basic themes/basic
 ```
 
 ```toml
