@@ -167,6 +167,7 @@
       if (!window.name) {
         window.name = "console-" + Math.random().toString(36).slice(2);
         sessionStorage.removeItem("music");
+        sessionStorage.removeItem("musicStep");
         sessionStorage.removeItem("consoleOpen");
       }
 
@@ -195,7 +196,7 @@
       var chiptune = (function () {
         var tune = TUNES.default || { bpm: 84, wave: "triangle", lead: [0], bass: [0] };
         var spn = 60 / tune.bpm / 2; // seconds per eighth-note
-        var ctx, master, timer, nextTime, step, playing = false, vol = 0.5;
+        var ctx, master, timer, nextTime, step = 0, playing = false, vol = 0.5;
         var freq = function (m) { return 440 * Math.pow(2, (m - 69) / 12); };
         var voice = function (m, t, dur, type, peak) { // peak: per-note gain (distinct from master vol)
           if (!m) return;
@@ -228,7 +229,7 @@
               ctx = new (window.AudioContext || window.webkitAudioContext)();
               master = ctx.createGain(); master.gain.value = vol; master.connect(ctx.destination);
             }
-            playing = true; step = 0;
+            playing = true;
             return Promise.resolve(ctx.resume()).then(function () {
               nextTime = ctx.currentTime + 0.05;
               clearInterval(timer); tick(); timer = setInterval(tick, 25);
@@ -236,6 +237,9 @@
             }, function (err) { playing = false; throw err; });
           },
           off: function () { playing = false; clearInterval(timer); },
+          // The next note to play, so the music carries on where it stopped.
+          getStep: function () { return step; },
+          setStep: function (n) { step = (n | 0) % tune.lead.length; },
           setVolume: function (n) { vol = n / 10; if (master) master.gain.value = vol; }
         };
       })();
@@ -261,6 +265,15 @@
       // silent no-op (`if (playing) return Promise.resolve();`). One real
       // click/keydown per fresh page load is the platform's floor here, not
       // something scriptable away short of turning the site into an SPA.
+      //
+      // So a link click doesn't restart the tune: the next note is saved on
+      // pagehide and the new page picks up from it (after a short gap, on that
+      // first click). Tab switches keep their place the same way.
+      chiptune.setTune(document.documentElement.dataset.theme); // else a reload resumes the default tune
+      chiptune.setStep(+sessionStorage.getItem("musicStep"));
+      window.addEventListener("pagehide", function () {
+        sessionStorage.setItem("musicStep", chiptune.getStep());
+      });
       var resumeIfWanted = function () {
         if (sessionStorage.getItem("music") === "on" && document.visibilityState === "visible") {
           chiptune.on().then(function () {}, function () {});
@@ -353,7 +366,7 @@
             function () { write({ text: "music blocked by the browser — interact with the page and retry." }); log.scrollTop = log.scrollHeight; }
           );
         }
-        if (res.music === "off") { sessionStorage.removeItem("music"); chiptune.off(); write({ text: "music off" }); }
+        if (res.music === "off") { sessionStorage.removeItem("music"); chiptune.off(); chiptune.setStep(0); write({ text: "music off" }); }
         if (res.volume != null) { localStorage.setItem("musicVolume", res.volume); chiptune.setVolume(res.volume); }
         input.value = "";
         histIdx = cmdHistory.length; // reset recall to the (empty) current line
