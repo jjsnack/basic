@@ -1,3 +1,3 @@
-module github.com/jjsnacks/basic
+module github.com/jjsnack/basic
 
 go 1.21

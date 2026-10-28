@@ -30,7 +30,7 @@ Fingerprint), see `layouts/partials/console.html`.
 Floating terminal, progressively enhanced — page works with JS off (launcher +
 window start `hidden`, JS unhides). All logic is in one file, `assets/js/console.js`:
 
-- `run(input, ctx)` is a **pure** function returning `{ lines, clear?, close?, theme?, music?, volume? }`.
+- `run(input, ctx)` is a **pure** function returning `{ lines, clear?, close?, theme?, music?, volume?, cat? }`.
   Keep it side-effect-free so the `node console.js` self-check can exercise it.
 - Browser wiring at the bottom reads those signals (applies theme, plays music, etc).
 - 8-bit soundtrack is synthesised live with WebAudio — no audio files.

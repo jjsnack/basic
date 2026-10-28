@@ -61,6 +61,7 @@
           { text: "commands" },
           { text: "  theme    : changes the theme of the site" },
           { text: "  music    : plays an 8-bit soundtrack" },
+          { text: "  cat      : prints a file to the screen (or sits on it)" },
           { text: "  history  : shows command history" },
           { text: "  clear    : clears the screen" },
           { text: "  close    : closes the console" },
@@ -118,6 +119,18 @@
           { text: "   volume : Set music volume [0-10]" }
         ] };
       }
+
+      case "cat":
+        // There are no files, only the cat.
+        return {
+          lines: cmd.args.map(function (f) { return { text: "cat: " + f + ": the cat is sitting on it" }; }),
+          cat: [ // lying flat, chin on paws, tail curled up behind
+            "   /\\_/|      _.--~~~--._",
+            "  / -.- `.--''           `-._",
+            " (  =^=  )   )   )  ___.--. ;~~,",
+            "  `--(_(_)--'`--'---'    (_/  ~'"
+          ]
+        };
 
       case "clear":
         return { lines: [], clear: true };
@@ -337,6 +350,14 @@
         if (res.clear) log.innerHTML = "";
         res.lines.forEach(function (l) { write(l); });
         if (res.theme) applyTheme(res.theme);
+        if (res.cat) {
+          var cat = document.createElement("pre");
+          cat.className = "console__cat";
+          cat.setAttribute("aria-hidden", "true"); // decorative; the purr line below is what gets announced
+          cat.textContent = res.cat.join("\n");
+          log.appendChild(cat);
+          write({ text: "prrr… prrr…" }, "purr");
+        }
         if (res.music === "on") {
           sessionStorage.setItem("music", "on");
           chiptune.setTune(document.documentElement.dataset.theme);
@@ -426,6 +447,9 @@
     assert.strictEqual(run("music volume 7", {}).volume, 7);
     assert.ok(/0-10/.test(run("music volume 99", {}).lines[0].text));
     assert.ok(/Subcommands/.test(run("music", {}).lines[4].text));
+    assert.ok(run("cat", {}).cat.length > 0 && run("cat", {}).lines.length === 0);
+    assert.ok(/notes\.txt: the cat is sitting on it/.test(run("cat notes.txt", {}).lines[0].text));
+    assert.strictEqual(run("cat a b", {}).lines.length, 2);
     assert.strictEqual(run("clear", {}).clear, true);
     assert.strictEqual(run("close", {}).close, true);
     assert.ok(/no history/.test(run("history", { history: [] }).lines[0].text));

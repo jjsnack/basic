@@ -21,13 +21,13 @@ hugo mod init github.com/you/your-site
 # hugo.toml
 [module]
   [[module.imports]]
-    path = "github.com/jjsnacks/basic"
+    path = "github.com/jjsnack/basic"
 ```
 
 **Or as a git submodule:**
 
 ```bash
-git submodule add https://github.com/jjsnacks/basic themes/basic
+git submodule add https://github.com/jjsnack/basic themes/basic
 ```
 
 ```toml
@@ -125,7 +125,7 @@ Full syntax and live examples for each: `exampleSite/content/posts/shortcodes.md
 
 A floating terminal (bottom-right launcher, `$`), progressively enhanced —
 the page works fully with JS off. Type `help` inside it for the full command
-list; the two with real content:
+list; the ones with real content:
 
 - `theme set <name>` — switch theme. Modes: `light`, `dark`, `auto`, plus any
   colour theme file under `assets/css/themes/*.css` (ships with `dracula`,
@@ -134,6 +134,8 @@ list; the two with real content:
 - `music play` / `music stop` / `music volume <0-10>` — an 8-bit soundtrack
   synthesised live with WebAudio (no audio files), one tune per theme,
   picks up where it left off when you follow a link (after one click).
+- `cat` — a sleeping ASCII cat that breathes and purrs. `cat <file>` doesn't
+  print the file: the cat is sitting on it.
 
 ### Change the accent colour
 
