@@ -327,6 +327,20 @@ main { padding-bottom: 6rem; }
   color: var(--term);
   overflow-x: auto;
 }
+/* `cat`: a slow breath (~13 a minute), swelling from the paws up; the purr
+   fades on the exhale. Reduced-motion is handled by the global rule above. */
+.console__cat {
+  margin: 0.25rem 0 0;
+  width: max-content; /* scale around the cat, not the full log width */
+  white-space: pre;
+  line-height: 1.1;
+  color: var(--term);
+  transform-origin: 50% 100%;
+  animation: cat-breathe 4.6s ease-in-out infinite;
+}
+.console__line--purr { color: var(--muted); animation: cat-purr 4.6s ease-in-out infinite; }
+@keyframes cat-breathe { 40% { transform: scale(1.025, 1.06); } }
+@keyframes cat-purr { 0%, 100% { opacity: 0.35; } 40% { opacity: 1; } }
 .console__form { display: flex; align-items: baseline; gap: 0.5em; margin-top: 0.25rem; }
 .console__prompt { color: var(--term); }
 .console__input {
