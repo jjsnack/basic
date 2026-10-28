@@ -133,7 +133,7 @@ list; the two with real content:
   Persisted to `localStorage`, no flash on reload.
 - `music play` / `music stop` / `music volume <0-10>` — an 8-bit soundtrack
   synthesised live with WebAudio (no audio files), one tune per theme,
-  keeps playing across page navigation.
+  picks up where it left off when you follow a link (after one click).
 
 ### Change the accent colour
 
