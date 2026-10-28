@@ -127,6 +127,7 @@ a:focus-visible { color: var(--link); }
 .post__body a { text-decoration: underline; text-underline-offset: 2px; text-decoration-color: var(--border); }
 .post__body a:hover { text-decoration-color: var(--link); }
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+main:focus { outline: none; } /* focused by in-page nav for screen readers; it isn't a control, so no ring */
 ::selection { background: var(--selection); }
 ::-moz-selection { background: var(--selection); }
 
