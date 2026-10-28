@@ -177,6 +177,8 @@
       // ---- 8-bit soundtrack: WebAudio, no assets. Tunes live in tunes.js ----
       // (window.TUNES), keyed by theme; the engine just plays the active one.
       var TUNES = (typeof window !== "undefined" && window.TUNES) || {};
+      // Tells sibling tabs "I'm playing now" so they go quiet (see below).
+      var tabs = window.BroadcastChannel ? new BroadcastChannel("basic-music") : null;
       var chiptune = (function () {
         var tune = TUNES.default || { bpm: 84, wave: "triangle", lead: [0], bass: [0] };
         var spn = 60 / tune.bpm / 2; // seconds per eighth-note
@@ -217,6 +219,7 @@
             return Promise.resolve(ctx.resume()).then(function () {
               nextTime = ctx.currentTime + 0.05;
               clearInterval(timer); tick(); timer = setInterval(tick, 25);
+              if (tabs) tabs.postMessage("playing");
             }, function (err) { playing = false; throw err; });
           },
           off: function () { playing = false; clearInterval(timer); },
@@ -228,7 +231,10 @@
       // every open tab runs its own copy of the loop, out of phase with the
       // others. Web Locks would coordinate this but Safari doesn't implement
       // it; Page Visibility works in every browser and matches what a user
-      // expects anyway (switch tabs, the music follows).
+      // expects anyway (switch tabs, the music follows). Two windows side by
+      // side are both "visible", so the tab that last started playing also
+      // silences the rest over BroadcastChannel; they keep music "on" and take
+      // it back on their next click or key press.
       //
       // "on" lives in sessionStorage: it survives a full-page navigation in
       // this tab (a static site — every link click is a real reload) without
@@ -250,6 +256,7 @@
       document.addEventListener("visibilitychange", function () {
         if (document.visibilityState === "hidden") chiptune.off(); // safe: synchronous, no promise involved
       });
+      if (tabs) tabs.onmessage = function () { chiptune.off(); };
       document.addEventListener("pointerdown", resumeIfWanted);
       document.addEventListener("keydown", resumeIfWanted);
 
