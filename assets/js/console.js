@@ -124,11 +124,11 @@
         // There are no files, only the cat.
         return {
           lines: cmd.args.map(function (f) { return { text: "cat: " + f + ": the cat is sitting on it" }; }),
-          cat: [ // lying flat, chin on paws, tail curled up behind
-            "   /\\_/|      _.--~~~--._",
-            "  / -.- `.--''           `-._",
-            " (  =^=  )   )   )  ___.--. ;~~,",
-            "  `--(_(_)--'`--'---'    (_/  ~'"
+          cat: [ // sleeping cat, ASCII art by Felix Lee
+            "      |\\      _,,,---,,_",
+            "ZZZzz /,`.-'`'    -.  ;-;;,_",
+            "     |,4-  ) )-,_. ,\\ (  `'-'",
+            "    '---''(_/--'  `-'\\_)"
           ]
         };
 
